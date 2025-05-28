@@ -1,46 +1,65 @@
-CREATE TABLE Role (
-    IdRole SERIAL PRIMARY KEY,
-    Title TEXT
+CREATE TABLE role (
+    idrole SERIAL PRIMARY KEY,
+    title TEXT
 );
 
-CREATE TABLE Username (
-    IdUsername BIGSERIAL PRIMARY KEY,
-    DateAddAccount DATE,
-    Login VARCHAR(50),
-    Password TEXT,
-    IdRole INTEGER REFERENCES Role(IdRole) ON DELETE CASCADE
+CREATE TABLE username (
+    idusername BIGSERIAL PRIMARY KEY,
+    login VARCHAR(50),
+    password TEXT,
+    dateaddaccount DATE,
+    idrole INTEGER REFERENCES role(idrole) ON DELETE CASCADE
 );
 
-CREATE TABLE MonetizationCourse (
-    IdMonetizationCourse SERIAL PRIMARY KEY,
-    Type VARCHAR(25)
+CREATE TABLE monetizationcourse (
+    idmonetizationcourse SERIAL PRIMARY KEY,
+    type VARCHAR(25)
 );
 
-CREATE TABLE Category (
-    IdCategory SERIAL PRIMARY KEY,
-    Type VARCHAR(25)
+CREATE TABLE levelknowledge (
+    idlevelknowledge SERIAL PRIMARY KEY,
+    type VARCHAR(25)
 );
 
-CREATE TABLE LevelKnowledge (
-    IdLevelKnowledge SERIAL PRIMARY KEY,
-    Type VARCHAR(25)
+CREATE TABLE category (
+    idcategory SERIAL PRIMARY KEY,
+    type VARCHAR(25)
 );
 
-CREATE TABLE AgePeople (
-    IdAgePeople SERIAL PRIMARY KEY,
-    Type VARCHAR(3)
+CREATE TABLE agepeople (
+    idagepeople SERIAL PRIMARY KEY,
+    type VARCHAR(3)
 );
 
-CREATE TABLE Course (
-    IdCourse BIGSERIAL PRIMARY KEY,
-    Title TEXT,
-    Description Text,
-    FileIcon BYTEA,
-    FileCourse BYTEA,
-    Price INTEGER,
-    IdUsername BIGINT REFERENCES Username(IdUsername) ON DELETE CASCADE,
-    IdMonetizationCourse INTEGER REFERENCES MonetizationCourse(IdMonetizationCourse) ON DELETE CASCADE,
-    IdCategory INTEGER REFERENCES Category(IdCategory) ON DELETE CASCADE,
-    IdLevelKnowledge INTEGER REFERENCES LevelKnowledge(IdLevelKnowledge) ON DELETE CASCADE,
-    IdAgePeople INTEGER REFERENCES AgePeople(IdAgePeople) ON DELETE CASCADE
+CREATE TABLE course (
+    idcourse BIGSERIAL PRIMARY KEY,
+    title VARCHAR(100),
+    description TEXT,
+    icon BYTEA,
+    dateadd DATE,
+    idusername BIGINT REFERENCES username(idusername) ON DELETE CASCADE,
+    idmonetizationcourse INTEGER REFERENCES monetizationcourse(idmonetizationcourse) ON DELETE CASCADE,
+    idlevelknowledge INTEGER REFERENCES levelknowledge(idlevelknowledge) ON DELETE CASCADE,
+    idcategory INTEGER REFERENCES category(idcategory) ON DELETE CASCADE,
+    idagepeople INTEGER REFERENCES agepeople(idagepeople) ON DELETE CASCADE
+);
+
+CREATE TABLE pages (
+    idpages BIGSERIAL PRIMARY KEY,
+    numberpage INT,
+    file BYTEA,
+    idcourse BIGINT REFERENCES course(idcourse) ON DELETE CASCADE
+);
+
+CREATE TABLE favoritesandhistory (
+    idfavoritesandhistory SERIAL PRIMARY KEY,
+    viewed INT,
+    idcourse BIGINT REFERENCES course(idcourse) ON DELETE CASCADE,
+    idusername BIGINT REFERENCES username(idusername) ON DELETE CASCADE
+);
+
+CREATE TABLE pay (
+    idpay BIGSERIAL PRIMARY KEY,
+    idcourse BIGINT REFERENCES course(idcourse) ON DELETE CASCADE,
+    idusername BIGINT REFERENCES username(idusername) ON DELETE CASCADE
 );
