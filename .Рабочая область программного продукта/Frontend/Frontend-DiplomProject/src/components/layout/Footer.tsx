@@ -41,7 +41,7 @@ const Footer = () => {
         
         <div className="border-t border-gray-800 mt-8 pt-6 text-sm text-center">
           <p>© {new Date().getFullYear()} Knowledge+. Все права защищены.</p>
-          <p>Дипломный проект Буянова Никита Родионовича ИСиП-22-4к</p>
+          <p>Дипломный проект Буянова Никиты Родионовича ИСиП-22-4к</p>
         </div>
       </div>
     </footer>

@@ -4,10 +4,6 @@ import { BookOpen, FileText, Users, DollarSign } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 const HomePage = () => {
-  // Load the mock API
-  useEffect(() => {
-    import('../services/mockApi');
-  }, []);
 
   const { user } = useAuth();
 

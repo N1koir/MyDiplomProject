@@ -276,6 +276,46 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "Backend_DiplomProject.Controllers.CategoryController",
+    "Method": "GetAgeRestrictions",
+    "RelativePath": "api/Category/age-restrictions",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend_DiplomProject.Controllers.CategoryController",
+    "Method": "GetCategories",
+    "RelativePath": "api/Category/categories",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend_DiplomProject.Controllers.CategoryController",
+    "Method": "GetLevels",
+    "RelativePath": "api/Category/levels",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend_DiplomProject.Controllers.CategoryController",
+    "Method": "GetMonetizationTypes",
+    "RelativePath": "api/Category/monetization-types",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Backend_DiplomProject.Controllers.Swagger.CourseController",
     "Method": "GetCourses",
     "RelativePath": "api/Course",

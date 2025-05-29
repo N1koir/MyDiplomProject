@@ -60,21 +60,22 @@ const Header = () => {
 
         <div className="hidden md:flex items-center space-x-3">
           {user ? (
-            <div className="relative group">
-              <button 
-                className="flex items-center bg-gray-800 rounded-full px-3 py-1 hover:bg-gray-700 transition-colors"
-                onClick={() => navigate('/profile')}
-              >
-                <UserCircle className="mr-2" size={20} />
-                <span className="truncate max-w-[100px]">{user.login}</span>
-              </button>
-              <button 
-                onClick={handleLogout}
-                className="flex items-center ml-2 px-3 py-1 rounded-md bg-gray-800 hover:bg-gray-700 transition-colors"
-              >
-                <LogOut size={18} />
-              </button>
-            </div>
+              <div className="relative group flex items-center gap-2">
+                <button
+                    className="flex items-center bg-gray-800 rounded-full px-3 py-1 hover:bg-gray-700 transition-colors"
+                    onClick={() => navigate('/profile')}
+                >
+                  <UserCircle className="mr-2" size={20} />
+                  <span className="truncate max-w-[100px]">{user.login}</span>
+                </button>
+
+                <button
+                    onClick={handleLogout}
+                    className="flex items-center justify-center p-2 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors"
+                >
+                  <LogOut size={18} />
+                </button>
+              </div>
           ) : (
             <div className="flex space-x-2">
               <Link 
@@ -143,8 +144,8 @@ const Header = () => {
                 >
                   Профиль
                 </Link>
-                <button 
-                  onClick={handleLogout} 
+                <button
+                  onClick={handleLogout}
                   className="text-left hover:text-orange-400 transition-colors py-2"
                 >
                   Выйти

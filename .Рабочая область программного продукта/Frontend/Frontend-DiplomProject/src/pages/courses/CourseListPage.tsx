@@ -51,20 +51,20 @@ const CourseListPage = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   
-  // Filter state
+  // Фильтр
   const [categories, setCategories] = useState<Category[]>([]);
   const [ageRestrictions, setAgeRestrictions] = useState<AgeRestriction[]>([]);
   const [levels, setLevels] = useState<Level[]>([]);
   const [monetizationTypes, setMonetizationTypes] = useState<MonetizationType[]>([]);
   const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
   
-  // Selected filters
+  // Выполнение фильтра
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [selectedAge, setSelectedAge] = useState<number | null>(null);
   const [selectedLevel, setSelectedLevel] = useState<number | null>(null);
   const [selectedMonetization, setSelectedMonetization] = useState<number | null>(null);
   const [priceRange, setPriceRange] = useState<{ min: number; max: number }>({ min: 1000, max: 20000 });
-  
+
   useEffect(() => {
     const fetchCourses = async () => {
       try {
@@ -78,16 +78,17 @@ const CourseListPage = () => {
         showToast('Ошибка при загрузке курсов', 'error');
       }
     };
-    
+
     const fetchFilters = async () => {
       try {
+        // Параллельный запрос всех фильтров
         const [categoriesRes, ageRes, levelsRes, monetizationRes] = await Promise.all([
-          api.get('/categories'),
-          api.get('/age-restrictions'),
-          api.get('/levels'),
-          api.get('/monetization-types')
+          api.get('/category/categories'),
+          api.get('/category/age-restrictions'),
+          api.get('/category/levels'),
+          api.get('/category/monetization-types'),
         ]);
-        
+
         if (categoriesRes.data.success) setCategories(categoriesRes.data.categories);
         if (ageRes.data.success) setAgeRestrictions(ageRes.data.ageRestrictions);
         if (levelsRes.data.success) setLevels(levelsRes.data.levels);
@@ -96,85 +97,35 @@ const CourseListPage = () => {
         console.error('Error fetching filters:', error);
       }
     };
-    
+
     const fetchFavorites = async () => {
       if (user) {
         try {
           const response = await api.get('/favorites', { params: { userId: user.idusername } });
           if (response.data.success) {
-            setFavorites(response.data.favorites.map((item: any) => ({
-              idcourse: item.idcourse,
-              viewed: item.viewed
-            })));
+            setFavorites(
+                response.data.favorites.map((item: any) => ({
+                  idcourse: item.idcourse,
+                  viewed: item.viewed
+                }))
+            );
           }
         } catch (error) {
           console.error('Error fetching favorites:', error);
         }
       }
     };
-    
+
     const loadData = async () => {
       setIsLoading(true);
       await Promise.all([fetchCourses(), fetchFilters(), fetchFavorites()]);
       setIsLoading(false);
     };
-    
+
     loadData();
   }, [user, showToast]);
-  
-  useEffect(() => {
-    // Apply filters and search
-    let result = [...courses];
-    
-    // Apply search query
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(
-        course => 
-          course.title.toLowerCase().includes(query) || 
-          course.description.toLowerCase().includes(query)
-      );
-    }
-    
-    // Apply category filter
-    if (selectedCategory) {
-      result = result.filter(course => course.idcategory === selectedCategory);
-    }
-    
-    // Apply age restriction filter
-    if (selectedAge) {
-      result = result.filter(course => course.idagepeople === selectedAge);
-    }
-    
-    // Apply level filter
-    if (selectedLevel) {
-      result = result.filter(course => course.idlevelknowledge === selectedLevel);
-    }
-    
-    // Apply monetization filter
-    if (selectedMonetization) {
-      result = result.filter(course => course.idmonetizationcourse === selectedMonetization);
-      
-      // Apply price range filter for paid courses
-      if (selectedMonetization === 2) {
-        result = result.filter(
-          course => 
-            (course.price && course.price >= priceRange.min && course.price <= priceRange.max)
-        );
-      }
-    }
-    
-    setFilteredCourses(result);
-  }, [
-    courses, 
-    searchQuery, 
-    selectedCategory, 
-    selectedAge, 
-    selectedLevel, 
-    selectedMonetization, 
-    priceRange
-  ]);
-  
+
+
   const resetFilters = () => {
     setSelectedCategory(null);
     setSelectedAge(null);
@@ -297,85 +248,82 @@ const CourseListPage = () => {
               </button>
             </div>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Category Filter */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Категория
               </label>
               <select
-                value={selectedCategory || ''}
-                onChange={(e) => setSelectedCategory(e.target.value ? parseInt(e.target.value) : null)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  value={selectedCategory || ''}
+                  onChange={(e) => setSelectedCategory(e.target.value ? parseInt(e.target.value) : null)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               >
                 <option value="">Все категории</option>
                 {categories.map((category) => (
-                  <option key={category.idcategory} value={category.idcategory}>
-                    {category.type}
-                  </option>
+                    <option key={category.idcategory} value={category.idcategory}>
+                      {category.type}
+                    </option>
                 ))}
               </select>
             </div>
-            
-            {/* Age Restriction Filter */}
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Возрастное ограничение
               </label>
               <select
-                value={selectedAge || ''}
-                onChange={(e) => setSelectedAge(e.target.value ? parseInt(e.target.value) : null)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  value={selectedAge || ''}
+                  onChange={(e) => setSelectedAge(e.target.value ? parseInt(e.target.value) : null)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               >
                 <option value="">Любой возраст</option>
                 {ageRestrictions.map((age) => (
-                  <option key={age.idagepeople} value={age.idagepeople}>
-                    {age.type}
-                  </option>
+                    <option key={age.idagepeople} value={age.idagepeople}>
+                      {age.type}
+                    </option>
                 ))}
               </select>
             </div>
-            
-            {/* Level Filter */}
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Уровень сложности
               </label>
               <select
-                value={selectedLevel || ''}
-                onChange={(e) => setSelectedLevel(e.target.value ? parseInt(e.target.value) : null)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  value={selectedLevel || ''}
+                  onChange={(e) => setSelectedLevel(e.target.value ? parseInt(e.target.value) : null)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               >
                 <option value="">Любой уровень</option>
                 {levels.map((level) => (
-                  <option key={level.idlevelknowledge} value={level.idlevelknowledge}>
-                    {level.type}
-                  </option>
+                    <option key={level.idlevelknowledge} value={level.idlevelknowledge}>
+                      {level.type}
+                    </option>
                 ))}
               </select>
             </div>
-            
-            {/* Monetization Filter */}
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Тип доступа
               </label>
               <select
-                value={selectedMonetization || ''}
-                onChange={(e) => setSelectedMonetization(e.target.value ? parseInt(e.target.value) : null)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  value={selectedMonetization || ''}
+                  onChange={(e) => setSelectedMonetization(e.target.value ? parseInt(e.target.value) : null)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               >
                 <option value="">Любой тип</option>
                 {monetizationTypes.map((type) => (
-                  <option key={type.idmonetizationcourse} value={type.idmonetizationcourse}>
-                    {type.type}
-                  </option>
+                    <option key={type.idmonetizationcourse} value={type.idmonetizationcourse}>
+                      {type.type}
+                    </option>
                 ))}
               </select>
             </div>
           </div>
-          
+
+
           {/* Price Range (only visible when Paid is selected) */}
           {selectedMonetization === 2 && (
             <div className="mt-6">
