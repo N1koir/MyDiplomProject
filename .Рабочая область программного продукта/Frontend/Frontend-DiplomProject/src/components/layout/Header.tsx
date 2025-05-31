@@ -41,10 +41,7 @@ const Header = () => {
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6">
           <Link to="/courses" className="hover:text-orange-400 transition-colors">
-            Курсы
-          </Link>
-          <Link to="/search" className="hover:text-orange-400 transition-colors">
-            Поиск
+            Каталог курсов
           </Link>
           {user ? (
             <>
@@ -114,13 +111,6 @@ const Header = () => {
             >
               Курсы
             </Link>
-            <Link 
-              to="/search" 
-              className="hover:text-orange-400 transition-colors py-2"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Поиск
-            </Link>
             {user ? (
               <>
                 <Link 
@@ -131,7 +121,7 @@ const Header = () => {
                   Редактор курсов
                 </Link>
                 <Link 
-                  to="/courses/history" 
+                  to="/courses/history"
                   className="hover:text-orange-400 transition-colors py-2"
                   onClick={() => setIsMenuOpen(false)}
                 >

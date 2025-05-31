@@ -74,7 +74,7 @@ const CourseListPage = () => {
           setFilteredCourses(response.data.courses);
         }
       } catch (error) {
-        console.error('Error fetching courses:', error);
+        console.error('Ошибка загрузки курсов:', error);
         showToast('Ошибка при загрузке курсов', 'error');
       }
     };
@@ -94,7 +94,7 @@ const CourseListPage = () => {
         if (levelsRes.data.success) setLevels(levelsRes.data.levels);
         if (monetizationRes.data.success) setMonetizationTypes(monetizationRes.data.monetizationTypes);
       } catch (error) {
-        console.error('Error fetching filters:', error);
+        console.error('Ошибка загрузка фильтроф:', error);
       }
     };
 
@@ -111,7 +111,7 @@ const CourseListPage = () => {
             );
           }
         } catch (error) {
-          console.error('Error fetching favorites:', error);
+          console.error('Ошибка загрузки избранных', error);
         }
       }
     };
@@ -166,7 +166,7 @@ const CourseListPage = () => {
         'success'
       );
     } catch (error) {
-      console.error('Error toggling favorite:', error);
+      console.error('Ошибка добавления в список избранных:', error);
       showToast('Ошибка при обновлении избранного', 'error');
     }
   };
@@ -190,7 +190,7 @@ const CourseListPage = () => {
         setFavorites([...favorites, { idcourse: courseId, viewed: 0 }]);
       }
     } catch (error) {
-      console.error('Error adding to history:', error);
+      console.error('Ошибка добавления в историю курсов:', error);
     }
   };
   

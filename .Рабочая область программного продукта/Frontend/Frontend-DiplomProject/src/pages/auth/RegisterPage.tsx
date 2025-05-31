@@ -22,7 +22,12 @@ const registerSchema = z.object({
     .boolean()
     .refine(value => value === true, {
       message: 'Вы должны принять условия политики компании'
-    })
+    }),
+  termsPersonal: z
+      .boolean()
+      .refine(value => value === true, {
+        message: 'Вы должны принять условия об обработки персональных данных'
+      })
 }).refine(data => data.password === data.confirmPassword, {
   message: 'Пароли не совпадают',
   path: ['confirmPassword']
@@ -153,8 +158,20 @@ const RegisterPage = () => {
               </a>
             </label>
           </div>
-          {errors.termsAccepted && (
-            <p className="mt-1 text-sm text-red-600">{errors.termsAccepted.message}</p>
+
+          <div className="flex items-center">
+            <input
+                id="termsPersonal"
+                type="checkbox"
+                {...register('termsPersonal')}
+                className="h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded"
+            />
+            <label htmlFor="termsPersonal" className="ml-2 block text-sm text-gray-900">
+              Я согласен на обработку персональный данных
+            </label>
+          </div>
+          {errors.termsPersonal && (
+            <p className="mt-1 text-sm text-red-600">{errors.termsPersonal.message}</p>
           )}
 
           <div>

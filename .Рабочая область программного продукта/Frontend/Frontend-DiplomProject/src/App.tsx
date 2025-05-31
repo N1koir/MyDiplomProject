@@ -7,6 +7,7 @@ import ProfilePage from './pages/auth/ProfilePage';
 import CourseListPage from './pages/courses/CourseListPage';
 import CourseViewPage from './pages/courses/CourseViewPage';
 import CourseEditorPage from './pages/courses/CourseEditorPage';
+import CourseForm from './pages/courses/CourseForm';
 import CourseHistoryPage from './pages/courses/CourseHistoryPage';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import { AuthProvider } from './contexts/AuthContext';
@@ -14,43 +15,43 @@ import { ToastProvider } from './contexts/ToastContext';
 
 function App() {
   return (
-    <Router>
-      <ToastProvider>
+      <Router>
         <AuthProvider>
-          <Layout>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-              <Route path="/courses" element={<CourseListPage />} />
-              <Route path="/courses/:id" element={<CourseViewPage />} />
-              
-              {/* Protected routes */}
-              <Route path="/profile" element={
-                <ProtectedRoute>
-                  <ProfilePage />
-                </ProtectedRoute>
-              } />
-              <Route path="/courses/editor" element={
-                <ProtectedRoute>
-                  <CourseEditorPage />
-                </ProtectedRoute>
-              } />
-              <Route path="/courses/editor/:id" element={
-                <ProtectedRoute>
-                  <CourseEditorPage />
-                </ProtectedRoute>
-              } />
-              <Route path="/courses/history" element={
-                <ProtectedRoute>
-                  <CourseHistoryPage />
-                </ProtectedRoute>
-              } />
-            </Routes>
-          </Layout>
+          <ToastProvider>
+            <Layout>
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/courses" element={<CourseListPage />} />
+                <Route path="/courses/:id" element={<CourseViewPage />} />
+
+                {/* Отдельные маршруты */}
+                <Route path="/profile" element={
+                  <ProtectedRoute>
+                    <ProfilePage />
+                  </ProtectedRoute>
+                } />
+                <Route path="/courses/editor" element={
+                  <ProtectedRoute>
+                    <CourseEditorPage />
+                  </ProtectedRoute>
+                } />
+                <Route path="/courses/editor/:id" element={
+                  <ProtectedRoute>
+                    <CourseForm />
+                  </ProtectedRoute>
+                } />
+                <Route path="/courses/history" element={
+                  <ProtectedRoute>
+                    <CourseHistoryPage />
+                  </ProtectedRoute>
+                } />
+              </Routes>
+            </Layout>
+          </ToastProvider>
         </AuthProvider>
-      </ToastProvider>
-    </Router>
+      </Router>
   );
 }
 

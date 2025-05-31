@@ -15,7 +15,7 @@ export default defineConfig({
         // target: 'https://localhost:7213',
         changeOrigin: true,
         secure: false,
-        rewrite: (path) => path.replace(/^\/api/, '/api'), // Сохраняем префикс /api
+        rewrite: (path) => path.replace(/^\/api/, '/api'),
         headers: {
           Connection: 'Keep-Alive'
         }

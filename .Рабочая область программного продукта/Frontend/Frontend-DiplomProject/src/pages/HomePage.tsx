@@ -9,7 +9,7 @@ const HomePage = () => {
 
   return (
     <div className="bg-gray-50">
-      {/* Hero Section */}
+      {/* Основная секция */}
       <section className="bg-gradient-to-r from-gray-900 to-gray-800 text-white">
         <div className="container mx-auto px-4 py-16 md:py-24">
           <div className="max-w-4xl mx-auto text-center">
@@ -43,7 +43,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Блочная секция */}
       <section className="py-16">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12">Преимущества платформы</h2>
@@ -53,7 +53,7 @@ const HomePage = () => {
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {/* Feature 1 */}
+            {/* Блок 1 */}
             <div className="bg-white p-6 rounded-lg shadow-md transition-transform duration-300 hover:translate-y-[-5px]">
               <div className="bg-orange-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
                 <BookOpen className="text-orange-600" size={24} />
@@ -64,7 +64,7 @@ const HomePage = () => {
               </p>
             </div>
             
-            {/* Feature 2 */}
+            {/* Блок 2 */}
             <div className="bg-white p-6 rounded-lg shadow-md transition-transform duration-300 hover:translate-y-[-5px]">
               <div className="bg-blue-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
                 <FileText className="text-blue-600" size={24} />
@@ -75,7 +75,7 @@ const HomePage = () => {
               </p>
             </div>
             
-            {/* Feature 3 */}
+            {/* Блок 3 */}
             <div className="bg-white p-6 rounded-lg shadow-md transition-transform duration-300 hover:translate-y-[-5px]">
               <div className="bg-green-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
                 <Users className="text-green-600" size={24} />
@@ -86,7 +86,7 @@ const HomePage = () => {
               </p>
             </div>
             
-            {/* Feature 4 */}
+            {/* Блок 4 */}
             <div className="bg-white p-6 rounded-lg shadow-md transition-transform duration-300 hover:translate-y-[-5px]">
               <div className="bg-purple-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
                 <DollarSign className="text-purple-600" size={24} />
@@ -100,7 +100,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* Решительный вопрос */}
       <section className="bg-orange-600 text-white py-16">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-6">Готовы начать обучение?</h2>
@@ -126,13 +126,13 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Popular Courses Section */}
+      {/* Секция популярных курсов */}
       <section className="py-16">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12">Популярные курсы</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Course 1 */}
+            {/* Курс 1 */}
             <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:translate-y-[-5px]">
               <div className="h-48 bg-gray-200 flex items-center justify-center">
                 <BookOpen size={48} className="text-gray-400" />
@@ -157,7 +157,7 @@ const HomePage = () => {
               </div>
             </div>
             
-            {/* Course 2 */}
+            {/* Курс 2 */}
             <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:translate-y-[-5px]">
               <div className="h-48 bg-gray-200 flex items-center justify-center">
                 <BookOpen size={48} className="text-gray-400" />
@@ -182,7 +182,7 @@ const HomePage = () => {
               </div>
             </div>
             
-            {/* Course 3 */}
+            {/* Курс 3 */}
             <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:translate-y-[-5px]">
               <div className="h-48 bg-gray-200 flex items-center justify-center">
                 <BookOpen size={48} className="text-gray-400" />

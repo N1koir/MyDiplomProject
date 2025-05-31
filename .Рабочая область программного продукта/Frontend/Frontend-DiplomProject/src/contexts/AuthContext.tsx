@@ -76,7 +76,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
       return false;
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('Login ошибка:', error);
       return false;
     } finally {
       setIsLoading(false);
@@ -118,7 +118,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const api = createApiInstance(); // Новый экземпляр для запроса
       api.post('/auth/logout');
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error('Logout ошибка:', error);
     }
 
     setUser(null);
@@ -139,7 +139,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setIsLoading(true);
       const api = createApiInstance();
 
-      console.log('Sending change password request', {
+      console.log('Отправка запроса на смену пароля', {
         userId: Number(userId), // Явное преобразование в число
         newPassword
       });
@@ -149,14 +149,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         NewPassword: newPassword
       });
 
-      console.log('Change password response', response);
+      console.log('Ответ на изменение пароля', response);
 
       return response.status === 200;
     } catch (error: any) {
-      console.error('Change password error:', error);
+      console.error('Изменение пароля ошибка:', error);
 
       if (error.response) {
-        console.error('Error details:', {
+        console.error('Детали ошибки:', {
           status: error.response.status,
           data: error.response.data,
           message: error.response.data?.message

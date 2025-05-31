@@ -2,81 +2,224 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../contexts/ToastContext';
+import { useEffect } from 'react';
+import { Plus, Pencil, Trash2, Search } from 'lucide-react';
 import { BookOpen } from 'lucide-react';
+import { api } from '../../services/api';
+
+interface Course {
+  idcourse: number;
+  title: string;
+  dateadd: string;
+}
 
 const CourseEditorPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
   const { showToast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+  const [password, setPassword] = useState('');
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+
+  // Загрузка курсов пользователя
+  useEffect(() => {
+    const fetchUserCourses = async () => {
+      if (!user) return;
+
+      try {
+        setIsLoading(true);
+        const response = await api.get(`/courses/user/${user.idusername}`);
+        setCourses(response.data);
+      } catch (error) {
+        console.error('Error fetching courses:', error);
+        showToast('Ошибка при загрузке курсов', 'error');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUserCourses();
+  }, [user]);
+
+  // Фильтрация курсов по поисковому запросу
+  const filteredCourses = courses.filter(course =>
+      course.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Обработка удаления курса
+  const handleDelete = async () => {
+    if (!selectedCourse || !user) return;
+
+    try {
+      const response = await api.post('/auth/verify-password', {
+        idusername: user.idusername,
+        password
+      });
+
+      if (response.data.success) {
+        await api.delete(`/courses/${selectedCourse.idcourse}`);
+        setCourses(courses.filter(c => c.idcourse !== selectedCourse.idcourse));
+        showToast('Курс успешно удален', 'success');
+      } else {
+        showToast('Неверный пароль', 'error');
+      }
+    } catch (error) {
+      console.error('Error deleting course:', error);
+      showToast('Неизвестная ошибка', 'error');
+    } finally {
+      setShowPasswordModal(false);
+      setShowDeleteModal(false);
+      setSelectedCourse(null);
+      setPassword('');
+    }
+  };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold flex items-center">
-            <BookOpen className="mr-2" size={24} />
-            {id ? 'Редактирование курса' : 'Создание курса'}
-          </h1>
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold">Мои курсы</h1>
+          <button
+              onClick={() => navigate('/courses/editor/new')}
+              className="flex items-center px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700"
+          >
+            <Plus size={20} className="mr-2" />
+            Создать курс
+          </button>
         </div>
 
-        <div className="space-y-6">
-          {/* Step 1: Initial Data */}
-          <div>
-            <h2 className="text-xl font-semibold mb-4">Основная информация</h2>
-            <div className="space-y-4">
-              <div>
-                <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-                  Название курса*
-                </label>
-                <input
-                  type="text"
-                  id="title"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-                  placeholder="Введите название курса"
-                />
-              </div>
-              
-              <div>
-                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-                  Описание
-                </label>
-                <textarea
-                  id="description"
-                  rows={4}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-                  placeholder="Введите описание курса"
-                />
+        {/* Поисковая строка */}
+        <div className="relative mb-6">
+          <input
+              type="text"
+              placeholder="Поиск курсов..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+          />
+          <Search
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+              size={20}
+          />
+        </div>
+
+        {/* Список курсов */}
+        {isLoading ? (
+            <div className="flex justify-center items-center h-40">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-orange-500"></div>
+            </div>
+        ) : filteredCourses.length > 0 ? (
+            <div className="bg-white rounded-lg shadow-md">
+              {filteredCourses.map((course) => (
+                  <div
+                      key={course.idcourse}
+                      className="flex items-center justify-between p-4 border-b last:border-b-0"
+                  >
+                    <div>
+                      <h3 className="text-lg font-medium">{course.title}</h3>
+                      <p className="text-sm text-gray-500">
+                        Создан: {new Date(course.dateadd).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <div className="flex space-x-2">
+                      <button
+                          onClick={() => navigate(`/courses/editor/${course.idcourse}`)}
+                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-md"
+                          title="Редактировать"
+                      >
+                        <Pencil size={20} />
+                      </button>
+                      <button
+                          onClick={() => {
+                            setSelectedCourse(course);
+                            setShowDeleteModal(true);
+                          }}
+                          className="p-2 text-red-600 hover:bg-red-50 rounded-md"
+                          title="Удалить"
+                      >
+                        <Trash2 size={20} />
+                      </button>
+                    </div>
+                  </div>
+              ))}
+            </div>
+        ) : (
+            <div className="text-center py-8 bg-white rounded-lg shadow-md">
+              <p className="text-gray-500">У вас пока нет созданных курсов</p>
+            </div>
+        )}
+
+        {/* Модальное окно подтверждения удаления */}
+        {showDeleteModal && selectedCourse && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white rounded-lg p-6 max-w-md mx-4">
+                <h3 className="text-lg font-medium mb-4">
+                  Выполняется процесс удаления курса "{selectedCourse.title}"
+                </h3>
+                <p className="text-gray-600 mb-6">Продолжить?</p>
+                <div className="flex justify-end space-x-3">
+                  <button
+                      onClick={() => {
+                        setShowDeleteModal(false);
+                        setSelectedCourse(null);
+                      }}
+                      className="px-4 py-2 border border-gray-300 rounded-md"
+                  >
+                    Отмена
+                  </button>
+                  <button
+                      onClick={() => {
+                        setShowDeleteModal(false);
+                        setShowPasswordModal(true);
+                      }}
+                      className="px-4 py-2 bg-red-600 text-white rounded-md"
+                  >
+                    Выполнить
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
+        )}
 
-          {/* Placeholder for future steps */}
-          <div className="flex justify-end space-x-3">
-            <button
-              onClick={() => navigate('/')}
-              className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-            >
-              Отмена
-            </button>
-            <button
-              disabled={isLoading}
-              className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 disabled:opacity-70"
-            >
-              {isLoading ? (
-                <span className="flex items-center">
-                  <span className="h-4 w-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Сохранение...
-                </span>
-              ) : (
-                'Продолжить'
-              )}
-            </button>
-          </div>
-        </div>
+        {/* Модальное окно ввода пароля */}
+        {showPasswordModal && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white rounded-lg p-6 max-w-md mx-4">
+                <h3 className="text-lg font-medium mb-4">
+                  Введите пароль для подтверждения
+                </h3>
+                <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md mb-6"
+                    placeholder="Введите пароль"
+                />
+                <div className="flex justify-end space-x-3">
+                  <button
+                      onClick={() => {
+                        setShowPasswordModal(false);
+                        setPassword('');
+                      }}
+                      className="px-4 py-2 border border-gray-300 rounded-md"
+                  >
+                    Отмена
+                  </button>
+                  <button
+                      onClick={handleDelete}
+                      className="px-4 py-2 bg-red-600 text-white rounded-md"
+                  >
+                    Подтвердить
+                  </button>
+                </div>
+              </div>
+            </div>
+        )}
       </div>
-    </div>
   );
 };
 
