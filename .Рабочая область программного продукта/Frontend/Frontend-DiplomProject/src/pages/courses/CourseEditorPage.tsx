@@ -26,17 +26,25 @@ const CourseEditorPage = () => {
   const [password, setPassword] = useState('');
   const [showPasswordModal, setShowPasswordModal] = useState(false);
 
-  // Загрузка курсов пользователя
+  // 1. Загрузка курсов пользователя и маппинг полей
   useEffect(() => {
     const fetchUserCourses = async () => {
       if (!user) return;
 
       try {
         setIsLoading(true);
-        const response = await api.get(`/courses/user/${user.idusername}`);
-        setCourses(response.data);
+        const response = await api.get(`/CoursesControllerEditList/user/${user.idusername}`);
+
+        // Преобразуем ответ из API (PascalCase) в наш интерфейс (camelCase)
+        const mapped: Course[] = response.data.map((c: any) => ({
+          idcourse: c.idCourse,
+          title: c.title,
+          dateadd: c.dateAdd
+        }));
+
+        setCourses(mapped);
       } catch (error) {
-        console.error('Error fetching courses:', error);
+        console.error('Ошибка загрузки курса:', error);
         showToast('Ошибка при загрузке курсов', 'error');
       } finally {
         setIsLoading(false);
@@ -44,32 +52,34 @@ const CourseEditorPage = () => {
     };
 
     fetchUserCourses();
-  }, [user]);
+  }, [user, showToast]);
 
-  // Фильтрация курсов по поисковому запросу
+  // 2. Фильтрация курсов по полю title
   const filteredCourses = courses.filter(course =>
       course.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Обработка удаления курса
+  // 3. Обработка удаления курса
   const handleDelete = async () => {
     if (!selectedCourse || !user) return;
 
     try {
+      // 1) Проверяем пароль
       const response = await api.post('/auth/verify-password', {
         idusername: user.idusername,
         password
       });
 
       if (response.data.success) {
-        await api.delete(`/courses/${selectedCourse.idcourse}`);
+        // 2) Если пароль верный — удаляем курс
+        await api.delete(`/CoursesControllerEditList/${selectedCourse.idcourse}`);
         setCourses(courses.filter(c => c.idcourse !== selectedCourse.idcourse));
         showToast('Курс успешно удален', 'success');
       } else {
         showToast('Неверный пароль', 'error');
       }
     } catch (error) {
-      console.error('Error deleting course:', error);
+      console.error('Неизвестная ошибка:', error);
       showToast('Неизвестная ошибка', 'error');
     } finally {
       setShowPasswordModal(false);
@@ -114,9 +124,9 @@ const CourseEditorPage = () => {
             </div>
         ) : filteredCourses.length > 0 ? (
             <div className="bg-white rounded-lg shadow-md">
-              {filteredCourses.map((course) => (
+              {filteredCourses.map((course, index) => (
                   <div
-                      key={course.idcourse}
+                      key={`${course.idcourse}-${index}`}  // ≪ сюда добавили индекс, чтобы ключ всегда был уникальным ≫
                       className="flex items-center justify-between p-4 border-b last:border-b-0"
                   >
                     <div>

@@ -5,6 +5,6 @@
     {
         public bool Success { get; set; }
         public string Message { get; set; }
-        public long? CourseId { get; set; } // idcourse из таблицы course
+        public long? CourseId { get; set; }
     }
 }

@@ -159,4 +159,37 @@ public class AuthController : ControllerBase
             return StatusCode(500, new { message = "Internal server error" });
         }
     }
+
+    /// <summary>
+    /// Проверка верификации
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    [HttpPost("verify-password")]
+    public async Task<IActionResult> VerifyPassword([FromBody] VerifyPasswordDto dto)
+    {
+        // Попытаемся найти пользователя по Idusername
+        var user = await _context.Usernames
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Idusername == dto.Idusername);
+
+        if (user == null)
+        {
+            // Если вдруг пользователь не найден — считаем, что неверные данные
+            return NotFound(new { success = false, message = "User not found" });
+        }
+
+        // Проверим хеш пароля
+        bool passwordMatches = false;
+        using (var sha256 = SHA256.Create())
+        {
+            var inputHash = Convert.ToHexString(
+                sha256.ComputeHash(Encoding.UTF8.GetBytes(dto.Password))
+            );
+            passwordMatches = inputHash.Equals(user.Password, StringComparison.OrdinalIgnoreCase);
+        }
+
+        return Ok(new { success = passwordMatches });
+    }
+
 }

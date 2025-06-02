@@ -1,5 +1,8 @@
 ﻿namespace Backend_DiplomProject.DTO
 {
+    /// <summary>
+    /// Регистрация
+    /// </summary>
     public class RegisterDto : LoginDto
     {
         public string Login { get; set; } = null!;

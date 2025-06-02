@@ -1,10 +1,12 @@
-﻿// DTO/CourseFormDto.cs
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
 namespace Backend_DiplomProject.DTO
 {
+    /// <summary>
+    /// Создание-редактирования курса
+    /// </summary>
     public class CourseFormDto
     {
         [FromForm(Name = "title")]
@@ -26,7 +28,7 @@ namespace Backend_DiplomProject.DTO
         public int Idmonetizationcourse { get; set; }
 
         [FromForm(Name = "price")]
-        public decimal? Price { get; set; }
+        public int? Price { get; set; }
 
         [FromForm(Name = "idcategory")]
         [Required]

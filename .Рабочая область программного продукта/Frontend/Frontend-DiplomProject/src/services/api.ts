@@ -52,5 +52,4 @@ export const getCategories = () =>
 export const getAgeGroups = () =>
     api.get('/category/age-restrictions').then(res => res.data);
 
-
 export { api };

@@ -1,11 +1,12 @@
 ﻿namespace Backend_DiplomProject.DTO
 {
     /// <summary>
-    /// Авторизация
+    /// Проверка верификации
     /// </summary>
-    public class LoginDto
+    public class VerifyPasswordDto
     {
-        public string Login { get; set; }
+        public long Idusername { get; set; }
+
         public string Password { get; set; }
     }
 }

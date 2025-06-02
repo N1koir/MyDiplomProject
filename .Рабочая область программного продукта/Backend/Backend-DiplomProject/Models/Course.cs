@@ -22,6 +22,8 @@ namespace Backend_DiplomProject.Models
         [Column("dateadd")]
         public DateTime Dateadd { get; set; }
 
+        [Column("price")]
+        public int? Price { get; set; }
 
         [Column("idusername")]
         public long Idusername { get; set; }

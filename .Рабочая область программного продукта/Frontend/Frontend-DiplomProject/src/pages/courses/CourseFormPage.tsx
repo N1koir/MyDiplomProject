@@ -81,7 +81,7 @@ const CourseFormPage = () => {
             // Редактирование
             try {
                 setIsLoading(true);
-                const response = await api.get(`/courses/${id}`);
+                const response = await api.get(`/coursescontrollercreateandedit/${id}`);
                 const course = response.data;
 
                 setCourseData({
@@ -114,11 +114,26 @@ const CourseFormPage = () => {
     const validateStep = () => {
         switch (step) {
             case 1:
-                return courseData.title.trim() !== '';
+                return (
+                    courseData.title.trim() !== '' &&
+                    courseData.description.trim() !== '' &&
+
+                    courseData.icon !== null &&
+                    courseData.icon !== undefined
+                );
             case 2:
                 return courseData.pages.every(page => page.content.trim() !== '');
             case 3:
-                return true;
+                return (
+                    courseData.monetizationType !== 0 &&
+                    courseData.category !== 0 &&
+                    courseData.ageRestriction !== 0 &&
+                    courseData.level !== 0 &&
+
+                    (courseData.monetizationType === 2
+                        ? courseData.price >= 1000 && courseData.price <= 20000
+                        : true)
+                );
             default:
                 return false;
         }
@@ -130,12 +145,12 @@ const CourseFormPage = () => {
         if (!file) return;
 
         if (!['image/jpeg', 'image/png'].includes(file.type)) {
-            showToast('Поддерживаются только форматы JPEG и PNG', 'error');
+            showToast('Поддерживаются только форматы JPEG и PNG', 'Ошибка');
             return;
         }
 
         if (file.size > 6 * 1024 * 1024) {
-            showToast('Размер файла не должен превышать 6 МБ', 'error');
+            showToast('Размер файла не должен превышать 6 МБ', 'Ошибка');
             return;
         }
 
@@ -235,12 +250,12 @@ const CourseFormPage = () => {
 
             if (id && id !== 'new') {
                 // Можно добавить явное указание: multipart/form-data (необязательно, Axios сам определит)
-                await api.put(`/courses/${id}`, formData, {
+                await api.put(`/coursescontrollercreateandedit/${id}`, formData, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 });
                 showToast('Курс успешно обновлен', 'success');
             } else {
-                await api.post('/courses', formData, {
+                await api.post('/coursescontrollercreateandedit', formData, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 });
                 showToast('Курс успешно создан', 'success');
@@ -337,7 +352,12 @@ const CourseFormPage = () => {
                                                 className="w-full h-full object-cover rounded-md"
                                             />
                                             <button
-                                                onClick={() => setCourseData({ ...courseData, icon: undefined })}
+                                                onClick={() => {
+                                                    setCourseData({ ...courseData, icon: null });
+                                                    if (fileInputRef.current) {
+                                                        fileInputRef.current.value = '';
+                                                    }
+                                                }}
                                                 className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
                                             >
                                                 <Minus size={12} />
@@ -448,6 +468,28 @@ const CourseFormPage = () => {
                                 </select>
                             </div>
 
+                            {courseData.monetizationType === 2 && (
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Стоимость (₽)
+                                    </label>
+                                    <input
+                                        type="number"
+                                        min="1000"
+                                        max="20000"
+                                        value={courseData.price || ''}
+                                        onChange={(e) => setCourseData({
+                                            ...courseData,
+                                            price: parseInt(e.target.value)
+                                        })}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                    />
+                                    <p className="mt-1 text-sm text-gray-500">
+                                        От 1 000 до 20 000 рублей
+                                    </p>
+                                </div>
+                            )}
+
                             {/* Категория */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -517,6 +559,13 @@ const CourseFormPage = () => {
                     </div>
                 )}
 
+                {/* Шаг 4: Сохранение */}
+                {step === 4 && (
+                    <div className="bg-white rounded-lg shadow-md p-6">
+                        <h2 className="text-center text-2xl font-bold mb-6">Сохранить курс?</h2>
+                    </div>
+                )}
+
                 {/* Навигация */}
                 <div className="flex justify-between mt-8">
                     {step > 1 ? (
@@ -537,7 +586,7 @@ const CourseFormPage = () => {
                         </button>
                     )}
 
-                    {step < 3 ? (
+                    {step < 4 ? (
                         <button
                             onClick={() => setStep(step + 1)}
                             disabled={!validateStep()}

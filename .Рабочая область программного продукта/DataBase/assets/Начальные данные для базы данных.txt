@@ -1,0 +1,84 @@
+"idagepeople": 1,
+    "type": "0"
+
+"idagepeople": 2,
+    "type": "6"
+
+"idagepeople": 3,
+    "type": "12"
+
+"idagepeople": 4,
+    "type": "16"
+
+"idagepeople": 5,
+    "type": "21+"
+
+
+
+
+
+"idcategory": 1,
+    "type": "Программирование"
+
+"idcategory": 2,
+    "type": "История"
+
+"idcategory": 3,
+    "type": "Литература"
+
+"idcategory": 4,
+    "type": "Музыка"
+
+"idcategory": 5,
+    "type": "Астрономия"
+
+"idcategory": 6,
+    "type": "Художество"
+
+"idcategory": 7,
+    "type": "Физика"
+
+"idcategory": 8,
+    "type": "Химия"
+
+"idcategory": 9,
+    "type": "Анатомия"
+
+"idcategory": 10,
+    "type": "Зоология"
+
+
+
+
+
+"idlevelknowledge": 1,
+    "type": "Общий уровень"
+    
+"idlevelknowledge": 2,
+    "type": "Начинающий уровень"
+    
+"idlevelknowledge": 3,
+    "type": "Средний уровень"
+    
+"idlevelknowledge": 4,
+    "type": "Высокий уровень"
+
+
+
+
+
+"idmonetizationcourse": 1,
+    "type": "Бесплатный курс"
+    
+"idmonetizationcourse": 2,
+    "type": "Платный курс"
+
+
+
+
+
+"idrole": 1,
+    "type": "Администратор"
+    
+"idrole": 2,
+    "type": "Пользователь"
