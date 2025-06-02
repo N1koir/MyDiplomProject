@@ -27,7 +27,7 @@ interface SelectOption {
     type: string;
 }
 
-const CourseForm = () => {
+const CourseFormPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { user } = useAuth();
@@ -40,10 +40,10 @@ const CourseForm = () => {
         title: '',
         description: '',
         pages: [{ content: '', order: 1 }],
-        monetizationType: 1,
-        category: 1,
-        ageRestriction: 1,
-        level: 1
+        monetizationType: 0,
+        category: 0,
+        ageRestriction: 0,
+        level: 0
     });
 
     // Опции для селектов
@@ -56,31 +56,29 @@ const CourseForm = () => {
     useEffect(() => {
         const fetchOptions = async () => {
             try {
-                const [
-                    categoriesRes,
-                    ageRes,
-                    levelsRes,
-                    monetizationRes
-                ] = await Promise.all([
-                    api.get('/categories'),
-                    api.get('/age-restrictions'),
-                    api.get('/levels'),
-                    api.get('/monetization-types')
+                const [categoriesRes, ageRes, levelsRes, monetizationRes] = await Promise.all([
+                    api.get('/category/categories'),
+                    api.get('/category/age-restrictions'),
+                    api.get('/category/levels'),
+                    api.get('/category/monetization-types'),
                 ]);
 
-                setCategories(categoriesRes.data);
-                setAgeRestrictions(ageRes.data);
-                setLevels(levelsRes.data);
-                setMonetizationTypes(monetizationRes.data);
+                if (categoriesRes.data.success) setCategories(categoriesRes.data.categories);
+                if (ageRes.data.success) setAgeRestrictions(ageRes.data.ageRestrictions);
+                if (levelsRes.data.success) setLevels(levelsRes.data.levels);
+                if (monetizationRes.data.success) setMonetizationTypes(monetizationRes.data.monetizationTypes);
             } catch (error) {
-                console.error('Error fetching options:', error);
+                console.error('Ошибка при загрузки данных:', error);
                 showToast('Ошибка при загрузке данных', 'error');
             }
         };
 
         const fetchCourse = async () => {
+
+            // Создание
             if (!id || id === 'new') return;
 
+            // Редактирование
             try {
                 setIsLoading(true);
                 const response = await api.get(`/courses/${id}`);
@@ -100,7 +98,7 @@ const CourseForm = () => {
                     level: course.idlevelknowledge
                 });
             } catch (error) {
-                console.error('Error fetching course:', error);
+                console.error('Ошибка при загрузки курса:', error);
                 showToast('Ошибка при загрузке курса', 'error');
                 navigate('/courses/editor');
             } finally {
@@ -216,34 +214,41 @@ const CourseForm = () => {
 
         try {
             setIsLoading(true);
-
             const formData = new FormData();
             formData.append('title', courseData.title);
             formData.append('description', courseData.description);
             if (courseData.icon) {
                 formData.append('icon', courseData.icon);
             }
+
             formData.append('idusername', user.idusername.toString());
             formData.append('idmonetizationcourse', courseData.monetizationType.toString());
+
             if (courseData.monetizationType === 2 && courseData.price) {
                 formData.append('price', courseData.price.toString());
             }
+
             formData.append('idcategory', courseData.category.toString());
             formData.append('idagepeople', courseData.ageRestriction.toString());
             formData.append('idlevelknowledge', courseData.level.toString());
             formData.append('pages', JSON.stringify(courseData.pages));
 
             if (id && id !== 'new') {
-                await api.put(`/courses/${id}`, formData);
+                // Можно добавить явное указание: multipart/form-data (необязательно, Axios сам определит)
+                await api.put(`/courses/${id}`, formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                });
                 showToast('Курс успешно обновлен', 'success');
             } else {
-                await api.post('/courses', formData);
+                await api.post('/courses', formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                });
                 showToast('Курс успешно создан', 'success');
             }
 
             navigate('/courses/editor');
         } catch (error) {
-            console.error('Error saving course:', error);
+            console.error('Ошибка сохранения:', error);
             showToast('Ошибка при сохранении курса', 'error');
         } finally {
             setIsLoading(false);
@@ -421,6 +426,7 @@ const CourseForm = () => {
                         <h2 className="text-2xl font-bold mb-6">Настройки курса</h2>
 
                         <div className="space-y-6">
+                            {/* Тип доступа */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
                                     Тип доступа
@@ -429,40 +435,20 @@ const CourseForm = () => {
                                     value={courseData.monetizationType}
                                     onChange={(e) => setCourseData({
                                         ...courseData,
-                                        monetizationType: parseInt(e.target.value)
+                                        monetizationType: Number(e.target.value)
                                     })}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
                                 >
+                                    <option value={0}>Тип не задан</option>
                                     {monetizationTypes.map((type) => (
-                                        <option key={type.id} value={type.id}>
+                                        <option key={type.idmonetizationcourse} value={type.idmonetizationcourse}>
                                             {type.type}
                                         </option>
                                     ))}
                                 </select>
                             </div>
 
-                            {courseData.monetizationType === 2 && (
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Стоимость (₽)
-                                    </label>
-                                    <input
-                                        type="number"
-                                        min="1000"
-                                        max="20000"
-                                        value={courseData.price || ''}
-                                        onChange={(e) => setCourseData({
-                                            ...courseData,
-                                            price: parseInt(e.target.value)
-                                        })}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-                                    />
-                                    <p className="mt-1 text-sm text-gray-500">
-                                        От 1 000 до 20 000 рублей
-                                    </p>
-                                </div>
-                            )}
-
+                            {/* Категория */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
                                     Категория
@@ -471,18 +457,20 @@ const CourseForm = () => {
                                     value={courseData.category}
                                     onChange={(e) => setCourseData({
                                         ...courseData,
-                                        category: parseInt(e.target.value)
+                                        category: Number(e.target.value)
                                     })}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
                                 >
+                                    <option value={0}>Тип не задан</option>
                                     {categories.map((category) => (
-                                        <option key={category.id} value={category.id}>
+                                        <option key={category.idcategory} value={category.idcategory}>
                                             {category.type}
                                         </option>
                                     ))}
                                 </select>
                             </div>
 
+                            {/* Возрастное ограничение */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
                                     Возрастное ограничение
@@ -491,18 +479,20 @@ const CourseForm = () => {
                                     value={courseData.ageRestriction}
                                     onChange={(e) => setCourseData({
                                         ...courseData,
-                                        ageRestriction: parseInt(e.target.value)
+                                        ageRestriction: Number(e.target.value)
                                     })}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
                                 >
+                                    <option value={0}>Тип не задан</option>
                                     {ageRestrictions.map((age) => (
-                                        <option key={age.id} value={age.id}>
+                                        <option key={age.idagepeople} value={age.idagepeople}>
                                             {age.type}
                                         </option>
                                     ))}
                                 </select>
                             </div>
 
+                            {/* Уровень сложности */}
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
                                     Уровень сложности
@@ -511,12 +501,13 @@ const CourseForm = () => {
                                     value={courseData.level}
                                     onChange={(e) => setCourseData({
                                         ...courseData,
-                                        level: parseInt(e.target.value)
+                                        level: Number(e.target.value)
                                     })}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
                                 >
+                                    <option value={0}>Тип не задан</option>
                                     {levels.map((level) => (
-                                        <option key={level.id} value={level.id}>
+                                        <option key={level.idlevelknowledge} value={level.idlevelknowledge}>
                                             {level.type}
                                         </option>
                                     ))}
@@ -577,4 +568,4 @@ const CourseForm = () => {
     );
 };
 
-export default CourseForm;
+export default CourseFormPage;

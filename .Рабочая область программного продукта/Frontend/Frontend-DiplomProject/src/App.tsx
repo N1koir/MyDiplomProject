@@ -7,7 +7,7 @@ import ProfilePage from './pages/auth/ProfilePage';
 import CourseListPage from './pages/courses/CourseListPage';
 import CourseViewPage from './pages/courses/CourseViewPage';
 import CourseEditorPage from './pages/courses/CourseEditorPage';
-import CourseForm from './pages/courses/CourseForm';
+import CourseFormPage from './pages/courses/CourseFormPage.tsx';
 import CourseHistoryPage from './pages/courses/CourseHistoryPage';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import { AuthProvider } from './contexts/AuthContext';
@@ -39,7 +39,7 @@ function App() {
                 } />
                 <Route path="/courses/editor/:id" element={
                   <ProtectedRoute>
-                    <CourseForm />
+                    <CourseFormPage />
                   </ProtectedRoute>
                 } />
                 <Route path="/courses/history" element={

@@ -125,7 +125,7 @@ const CourseListPage = () => {
     loadData();
   }, [user, showToast]);
 
-
+  // Обнуление фильтров
   const resetFilters = () => {
     setSelectedCategory(null);
     setSelectedAge(null);

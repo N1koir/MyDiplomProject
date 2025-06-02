@@ -40,11 +40,11 @@ const Header = () => {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6">
-          <Link to="/courses" className="hover:text-orange-400 transition-colors">
-            Каталог курсов
-          </Link>
           {user ? (
             <>
+              <Link to="/courses" className="hover:text-orange-400 transition-colors">
+                Каталог курсов
+              </Link>
               <Link to="/courses/editor" className="hover:text-orange-400 transition-colors">
                 Редактор курсов
               </Link>

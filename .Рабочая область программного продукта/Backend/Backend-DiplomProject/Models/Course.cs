@@ -48,5 +48,12 @@ namespace Backend_DiplomProject.Models
         public Category Category { get; set; }
 
         public AgePeople Age { get; set; }
+
+        /// <summary>
+        /// Принудительное подключение к сущности Pages в базе данных
+        /// </summary>
+        public ICollection<Pages> Pages { get; set; } = new List<Pages>();
+
+
     }
 }

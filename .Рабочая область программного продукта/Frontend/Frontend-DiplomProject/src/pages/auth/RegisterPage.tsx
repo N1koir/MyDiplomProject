@@ -10,8 +10,8 @@ import { UserPlus, FileText } from 'lucide-react';
 const registerSchema = z.object({
   username: z
     .string()
-    .min(1, 'Логин обязателен')
-    .regex(/^[a-zA-Z0-9_]+$/, 'Логин должен содержать только буквы, цифры и знак подчеркивания'),
+    .min(1, 'Электронная почта обязательна')
+    .regex(/^[a-zA-Z0-9_]+$/, 'Электронная почта должна содержать почтовый ящик'),
   password: z
     .string()
     .min(6, 'Пароль должен содержать минимум 6 символов'),
@@ -60,7 +60,7 @@ const RegisterPage = () => {
         showToast('Регистрация прошла успешно', 'success');
         navigate('/');
       } else {
-        showToast('Логин уже занят или произошла ошибка при регистрации', 'error');
+        showToast('Электронная почта уже используется или произошла ошибка при регистрации', 'error');
       }
     } catch (error) {
       showToast('Произошла ошибка при регистрации', 'error');
@@ -91,7 +91,7 @@ const RegisterPage = () => {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
-              <label htmlFor="username" className="sr-only">Логин</label>
+              <label htmlFor="username" className="sr-only">Электронная почта</label>
               <input
                 id="username"
                 type="text"
@@ -100,7 +100,7 @@ const RegisterPage = () => {
                 className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
                   errors.username ? 'border-red-300 placeholder-red-300' : 'border-gray-300'
                 } placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-orange-500 focus:border-orange-500 focus:z-10 sm:text-sm`}
-                placeholder="Логин"
+                placeholder="Электронная почта"
               />
               {errors.username && (
                 <p className="mt-1 text-sm text-red-600">{errors.username.message}</p>

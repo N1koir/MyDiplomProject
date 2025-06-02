@@ -32,9 +32,33 @@ namespace Backend_DiplomProject
                 .HasForeignKey(c => c.Idusername)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Course>()
+                .HasOne(c => c.Monetization)
+                .WithMany()
+                .HasForeignKey(c => c.Idmonetizationcourse)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Course>()
+                .HasOne(c => c.Level)
+                .WithMany()
+                .HasForeignKey(c => c.Idlevelknowledge)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Course>()
+                .HasOne(c => c.Category)
+                .WithMany()
+                .HasForeignKey(c => c.Idcategory)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Course>()
+                .HasOne(c => c.Age)
+                .WithMany()
+                .HasForeignKey(c => c.Idagepeople)
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<Pages>()
                 .HasOne(p => p.Course)
-                .WithMany()
+                .WithMany(c => c.Pages)
                 .HasForeignKey(p => p.Idcourse)
                 .OnDelete(DeleteBehavior.Cascade);
 

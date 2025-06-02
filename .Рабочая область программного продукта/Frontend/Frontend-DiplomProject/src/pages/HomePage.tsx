@@ -144,15 +144,15 @@ const HomePage = () => {
                   </span>
                   <span className="text-sm text-gray-500">Начинающий</span>
                 </div>
-                <h3 className="text-xl font-semibold mb-2">Введение в веб-разработку</h3>
+                <h3 className="text-xl font-semibold mb-2">Введение в учебную платформу Knowledge+</h3>
                 <p className="text-gray-600 mb-4">
-                  Базовый курс по HTML, CSS и JavaScript
+                  Описание платформы Knowledge+
                 </p>
                 <Link
                   to="/courses/1"
                   className="block text-center w-full py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 transition-colors"
                 >
-                  {user ? 'Открыть курс' : 'Войти для просмотра'}
+                  Открыть курс
                 </Link>
               </div>
             </div>
@@ -164,20 +164,20 @@ const HomePage = () => {
               </div>
               <div className="p-6">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
-                    2999 ₽
+                  <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                    Бесплатно
                   </span>
                   <span className="text-sm text-gray-500">Средний</span>
                 </div>
-                <h3 className="text-xl font-semibold mb-2">UI/UX Дизайн с нуля</h3>
+                <h3 className="text-xl font-semibold mb-2">Просмотр курсов</h3>
                 <p className="text-gray-600 mb-4">
-                  Основы дизайна пользовательских интерфейсов
+                  Основы просмотра курсов на платформе Knowledge+
                 </p>
                 <Link
                   to="/courses/2"
                   className="block text-center w-full py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 transition-colors"
                 >
-                  {user ? 'Открыть курс' : 'Войти для просмотра'}
+                  Открыть курс
                 </Link>
               </div>
             </div>
@@ -194,15 +194,15 @@ const HomePage = () => {
                   </span>
                   <span className="text-sm text-gray-500">Продвинутый</span>
                 </div>
-                <h3 className="text-xl font-semibold mb-2">React для начинающих</h3>
+                <h3 className="text-xl font-semibold mb-2">Создание курсов</h3>
                 <p className="text-gray-600 mb-4">
-                  Основы React, хуки, роутинг и работа с API
+                  Основы создания курсов на платформе Knowledge+
                 </p>
                 <Link
                   to="/login"
                   className="block text-center w-full py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 transition-colors"
                 >
-                  {user ? 'Открыть курс' : 'Войти для просмотра'}
+                  Открыть курс
                 </Link>
               </div>
             </div>

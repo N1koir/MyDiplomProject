@@ -3,24 +3,28 @@
   "WorkspaceRootPath": "C:\\Users\\hlebu\\Desktop\\Backend-DiplomProject\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{E6DE4F4A-C66D-4A95-961C-38141CE8644C}|Backend-DiplomProject.csproj|c:\\users\\hlebu\\desktop\\backend-diplomproject\\controllers\\categorycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E6DE4F4A-C66D-4A95-961C-38141CE8644C}|Backend-DiplomProject.csproj|solutionrelative:controllers\\categorycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{E6DE4F4A-C66D-4A95-961C-38141CE8644C}|Backend-DiplomProject.csproj|c:\\users\\hlebu\\desktop\\backend-diplomproject\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E6DE4F4A-C66D-4A95-961C-38141CE8644C}|Backend-DiplomProject.csproj|solutionrelative:appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E6DE4F4A-C66D-4A95-961C-38141CE8644C}|Backend-DiplomProject.csproj|c:\\users\\hlebu\\desktop\\backend-diplomproject\\models\\monetizationcourse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E6DE4F4A-C66D-4A95-961C-38141CE8644C}|Backend-DiplomProject.csproj|solutionrelative:models\\monetizationcourse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{E6DE4F4A-C66D-4A95-961C-38141CE8644C}|Backend-DiplomProject.csproj|c:\\users\\hlebu\\desktop\\backend-diplomproject\\controllers\\coursescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E6DE4F4A-C66D-4A95-961C-38141CE8644C}|Backend-DiplomProject.csproj|solutionrelative:controllers\\coursescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E6DE4F4A-C66D-4A95-961C-38141CE8644C}|Backend-DiplomProject.csproj|c:\\users\\hlebu\\desktop\\backend-diplomproject\\models\\levelknowledge.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E6DE4F4A-C66D-4A95-961C-38141CE8644C}|Backend-DiplomProject.csproj|solutionrelative:models\\levelknowledge.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{E6DE4F4A-C66D-4A95-961C-38141CE8644C}|Backend-DiplomProject.csproj|c:\\users\\hlebu\\desktop\\backend-diplomproject\\models\\pages.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E6DE4F4A-C66D-4A95-961C-38141CE8644C}|Backend-DiplomProject.csproj|solutionrelative:models\\pages.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E6DE4F4A-C66D-4A95-961C-38141CE8644C}|Backend-DiplomProject.csproj|c:\\users\\hlebu\\desktop\\backend-diplomproject\\models\\agepeople.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{E6DE4F4A-C66D-4A95-961C-38141CE8644C}|Backend-DiplomProject.csproj|solutionrelative:models\\agepeople.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E6DE4F4A-C66D-4A95-961C-38141CE8644C}|Backend-DiplomProject.csproj|c:\\users\\hlebu\\desktop\\backend-diplomproject\\models\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E6DE4F4A-C66D-4A95-961C-38141CE8644C}|Backend-DiplomProject.csproj|solutionrelative:models\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{E6DE4F4A-C66D-4A95-961C-38141CE8644C}|Backend-DiplomProject.csproj|c:\\users\\hlebu\\desktop\\backend-diplomproject\\models\\course.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E6DE4F4A-C66D-4A95-961C-38141CE8644C}|Backend-DiplomProject.csproj|solutionrelative:models\\course.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E6DE4F4A-C66D-4A95-961C-38141CE8644C}|Backend-DiplomProject.csproj|c:\\users\\hlebu\\desktop\\backend-diplomproject\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E6DE4F4A-C66D-4A95-961C-38141CE8644C}|Backend-DiplomProject.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -30,8 +34,22 @@
       "DocumentGroups": [
         {
           "DockedWidth": 229,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 5,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Course.cs",
+              "DocumentMoniker": "C:\\Users\\hlebu\\Desktop\\Backend-DiplomProject\\Models\\Course.cs",
+              "RelativeDocumentMoniker": "Models\\Course.cs",
+              "ToolTip": "C:\\Users\\hlebu\\Desktop\\Backend-DiplomProject\\Models\\Course.cs",
+              "RelativeToolTip": "Models\\Course.cs",
+              "ViewState": "AgIAABEAAAAAAAAAAAAgwCgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-02T08:24:33.736Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:128:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
@@ -50,59 +68,59 @@
               "RelativeToolTip": "Models\\AgePeople.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-29T10:16:16.733Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Category.cs",
-              "DocumentMoniker": "C:\\Users\\hlebu\\Desktop\\Backend-DiplomProject\\Models\\Category.cs",
-              "RelativeDocumentMoniker": "Models\\Category.cs",
-              "ToolTip": "C:\\Users\\hlebu\\Desktop\\Backend-DiplomProject\\Models\\Category.cs",
-              "RelativeToolTip": "Models\\Category.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-29T10:16:01.945Z",
+              "WhenOpened": "2025-06-02T08:25:07.338Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "LevelKnowledge.cs",
-              "DocumentMoniker": "C:\\Users\\hlebu\\Desktop\\Backend-DiplomProject\\Models\\LevelKnowledge.cs",
-              "RelativeDocumentMoniker": "Models\\LevelKnowledge.cs",
-              "ToolTip": "C:\\Users\\hlebu\\Desktop\\Backend-DiplomProject\\Models\\LevelKnowledge.cs",
-              "RelativeToolTip": "Models\\LevelKnowledge.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
+              "Title": "Pages.cs",
+              "DocumentMoniker": "C:\\Users\\hlebu\\Desktop\\Backend-DiplomProject\\Models\\Pages.cs",
+              "RelativeDocumentMoniker": "Models\\Pages.cs",
+              "ToolTip": "C:\\Users\\hlebu\\Desktop\\Backend-DiplomProject\\Models\\Pages.cs",
+              "RelativeToolTip": "Models\\Pages.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAYAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-29T10:15:31.851Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "MonetizationCourse.cs",
-              "DocumentMoniker": "C:\\Users\\hlebu\\Desktop\\Backend-DiplomProject\\Models\\MonetizationCourse.cs",
-              "RelativeDocumentMoniker": "Models\\MonetizationCourse.cs",
-              "ToolTip": "C:\\Users\\hlebu\\Desktop\\Backend-DiplomProject\\Models\\MonetizationCourse.cs",
-              "RelativeToolTip": "Models\\MonetizationCourse.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-29T09:48:09.981Z",
+              "WhenOpened": "2025-06-02T07:18:55.402Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "CategoryController.cs",
-              "DocumentMoniker": "C:\\Users\\hlebu\\Desktop\\Backend-DiplomProject\\Controllers\\CategoryController.cs",
-              "RelativeDocumentMoniker": "Controllers\\CategoryController.cs",
-              "ToolTip": "C:\\Users\\hlebu\\Desktop\\Backend-DiplomProject\\Controllers\\CategoryController.cs",
-              "RelativeToolTip": "Controllers\\CategoryController.cs",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAAABkAAAAAAAAAAAAAAA==",
+              "Title": "AppDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\hlebu\\Desktop\\Backend-DiplomProject\\AppDbContext.cs",
+              "RelativeDocumentMoniker": "AppDbContext.cs",
+              "ToolTip": "C:\\Users\\hlebu\\Desktop\\Backend-DiplomProject\\AppDbContext.cs",
+              "RelativeToolTip": "AppDbContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAFcAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-29T09:45:01.755Z",
+              "WhenOpened": "2025-06-02T07:08:21.316Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CoursesController.cs",
+              "DocumentMoniker": "C:\\Users\\hlebu\\Desktop\\Backend-DiplomProject\\Controllers\\CoursesController.cs",
+              "RelativeDocumentMoniker": "Controllers\\CoursesController.cs",
+              "ToolTip": "C:\\Users\\hlebu\\Desktop\\Backend-DiplomProject\\Controllers\\CoursesController.cs",
+              "RelativeToolTip": "Controllers\\CoursesController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADkAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-02T06:58:17.902Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\hlebu\\Desktop\\Backend-DiplomProject\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Users\\hlebu\\Desktop\\Backend-DiplomProject\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAADcAAAAAAAAAAAAQwFQAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-01T04:14:49.395Z",
               "EditorCaption": ""
             }
           ]

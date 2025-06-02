@@ -58,7 +58,7 @@ const LoginPage = () => {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
-              <label htmlFor="username" className="sr-only">Логин</label>
+              <label htmlFor="username" className="sr-only">Электронная почта</label>
               <input
                 id="username"
                 type="text"
@@ -67,7 +67,7 @@ const LoginPage = () => {
                 className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
                   errors.username ? 'border-red-300 placeholder-red-300' : 'border-gray-300'
                 } placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-orange-500 focus:border-orange-500 focus:z-10 sm:text-sm`}
-                placeholder="Логин"
+                placeholder="Электронная почта"
               />
               {errors.username && (
                 <p className="mt-1 text-sm text-red-600">{errors.username.message}</p>

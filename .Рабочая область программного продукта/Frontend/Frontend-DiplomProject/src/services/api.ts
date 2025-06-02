@@ -3,10 +3,7 @@
 // Создание api
 const api = axios.create({
   baseURL: '/api',
-  timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json'
-  }
+  timeout: 10000
 });
 
 // Вывод ошибок от API
@@ -44,15 +41,16 @@ api.interceptors.request.use(config => {
 
 // API методы
 export const getMonetizationTypes = () =>
-    api.get('/dictionary/monetization').then(res => res.data);
+    api.get('/category/monetization-types').then(res => res.data);
 
 export const getLevelKnowledgeTypes = () =>
-    api.get('/dictionary/levelknowledge').then(res => res.data);
+    api.get('/category/levels').then(res => res.data);
 
 export const getCategories = () =>
-    api.get('/dictionary/categories').then(res => res.data);
+    api.get('/category/categories').then(res => res.data);
 
 export const getAgeGroups = () =>
-    api.get('/dictionary/agepeople').then(res => res.data);
+    api.get('/category/age-restrictions').then(res => res.data);
+
 
 export { api };

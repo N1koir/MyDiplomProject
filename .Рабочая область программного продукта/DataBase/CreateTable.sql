@@ -39,6 +39,7 @@ CREATE TABLE course (
     dateadd DATE,
     idusername BIGINT REFERENCES username(idusername) ON DELETE CASCADE,
     idmonetizationcourse INTEGER REFERENCES monetizationcourse(idmonetizationcourse) ON DELETE CASCADE,
+    price INTEGER,
     idlevelknowledge INTEGER REFERENCES levelknowledge(idlevelknowledge) ON DELETE CASCADE,
     idcategory INTEGER REFERENCES category(idcategory) ON DELETE CASCADE,
     idagepeople INTEGER REFERENCES agepeople(idagepeople) ON DELETE CASCADE

@@ -100,7 +100,7 @@ const ProfilePage = () => {
             <h2 className="text-lg font-semibold mb-4">Информация аккаунта</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <p className="text-sm text-gray-500">Логин</p>
+                <p className="text-sm text-gray-500">Электронная почта</p>
                 <p className="font-medium">{user.login}</p>
               </div>
               <div>
