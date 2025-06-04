@@ -6,20 +6,24 @@ import { ChevronLeft, ChevronRight, CreditCard, X } from 'lucide-react';
 import MarkdownPreview from '@uiw/react-markdown-preview';
 import { api } from '../../services/api';
 
-interface Course {
-    idcourse: number;
+interface PageListDto {
+    idPage: number;
+    numberPage: number;
+    fileContent: string;
+}
+
+interface CourseListViewDto {
+    idCourse: number;
     title: string;
     description: string;
-    idmonetizationcourse: number;
+    idMonetizationCourse: number; // 1 = бесплатно, 2 = платный
     price?: number;
-    pages: {
-        idpage: number;
-        numberpage: number;
-        file: string;
-    }[];
+    pagesCount: number;
     category: string;
     age: string;
     level: string;
+    authorId: number; // новый флаг — кто автор курса
+    pages: PageListDto[];
 }
 
 interface PaymentFormData {
@@ -30,18 +34,19 @@ interface PaymentFormData {
 }
 
 const CourseViewPage = () => {
-    const { id } = useParams();
+    const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const { user } = useAuth();
     const { showToast } = useToast();
 
-    const [course, setCourse] = useState<Course | null>(null);
+    const [course, setCourse] = useState<CourseListViewDto | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [hasPaid, setHasPaid] = useState(false);
+    const [isOwner, setIsOwner] = useState(false); // новый стейт
     const [showPaymentModal, setShowPaymentModal] = useState(false);
     const [currentPage, setCurrentPage] = useState(0);
 
-    // Поля для оплаты
+    // Состояние формы оплаты
     const [paymentData, setPaymentData] = useState<PaymentFormData>({
         cardNumber: '',
         expiryMonth: '',
@@ -49,7 +54,7 @@ const CourseViewPage = () => {
         cvc: ''
     });
 
-    // Форма валидации для оплаты
+    // Валидация формы оплаты
     const validatePaymentForm = () => {
         const currentDate = new Date();
         const currentYear = currentDate.getFullYear();
@@ -64,32 +69,50 @@ const CourseViewPage = () => {
             paymentData.cvc.length === 3 &&
             /^\d+$/.test(paymentData.cvc) &&
             year >= 2025 &&
-            (year > 2025 || (year === 2025 && month >= 6)) &&
+            (year > 2025 || (year === 2025 && month >= 1)) &&
             month >= 1 &&
             month <= 12
         );
     };
 
-    // Загрузка данных курсов и проверка оплаты
+    // Загрузка данных курса + проверка оплаты
     useEffect(() => {
         const loadCourse = async () => {
             if (!id || !user) return;
 
             try {
                 setIsLoading(true);
-                const [courseRes, paymentRes] = await Promise.all([
-                    api.get(`/courses/${id}`),
-                    api.get('/payments/check', {
-                        params: { userId: user.idusername, courseId: id }
-                    })
-                ]);
+                // 1) Получаем курс
+                const courseRes = await api.get(`/courses/${id}`);
 
-                if (courseRes.data.success) {
-                    setCourse(courseRes.data.course);
+                if (!courseRes.data.success) {
+                    showToast('Курс не найден', 'error');
+                    navigate('/courses');
+                    return;
                 }
 
-                if (paymentRes.data.success) {
-                    setHasPaid(paymentRes.data.hasPaid);
+                const fetchedCourse: CourseListViewDto = courseRes.data.course;
+                setCourse(fetchedCourse);
+
+                // Проверяем, является ли текущий пользователь автором курса
+                if (fetchedCourse.authorId === user.idusername) {
+                    setIsOwner(true);
+                    setHasPaid(true);
+                } else {
+                    setIsOwner(false);
+                    // 3) Если не владелец и курс платный, проверяем наличие записи об оплате
+                    if (fetchedCourse.idMonetizationCourse === 2) {
+                        const paymentRes = await api.get('/payments/check', {
+                            params: { userId: user.idusername, courseId: id }
+                        });
+                        if (paymentRes.data.success) {
+                            setHasPaid(paymentRes.data.hasPaid);
+                        } else {
+                            setHasPaid(false);
+                        }
+                    } else {
+                        setHasPaid(true);
+                    }
                 }
             } catch (error) {
                 console.error('Error loading course:', error);
@@ -101,16 +124,15 @@ const CourseViewPage = () => {
         };
 
         loadCourse();
-    }, [id, user]);
+    }, [id, user, navigate, showToast]);
 
-    // Оплата курса
     const handlePayment = async () => {
         if (!course || !user) return;
 
         try {
             const response = await api.post('/payments', {
                 idusername: user.idusername,
-                idcourse: course.idcourse
+                idcourse: course.idCourse
             });
 
             if (response.data.success) {
@@ -118,11 +140,11 @@ const CourseViewPage = () => {
                 setShowPaymentModal(false);
                 showToast('Оплата прошла успешно', 'success');
             } else {
-                showToast('Неизвестная ошибка', 'error');
+                showToast('Неизвестная ошибка при оплате', 'error');
             }
         } catch (error) {
             console.error('Payment error:', error);
-            showToast('Неизвестная ошибка', 'error');
+            showToast('Неизвестная ошибка при оплате', 'error');
         }
     };
 
@@ -134,7 +156,6 @@ const CourseViewPage = () => {
         );
     }
 
-    // Поисковик
     if (!course) {
         return (
             <div className="container mx-auto px-4 py-8">
@@ -145,12 +166,14 @@ const CourseViewPage = () => {
         );
     }
 
-    // Сортировка страниц
-    const sortedPages = [...course.pages].sort((a, b) => a.numberpage - b.numberpage);
+    // Сортируем страницы (на всякий случай, хотя API уже отдаёт отсортированными)
+    const sortedPages = [...course.pages].sort((a, b) => a.numberPage - b.numberPage);
 
     return (
         <div className="container mx-auto px-4 py-8">
-            {/* Course Info Card */}
+            {/* ---------------------------------- */}
+            {/*   Информационная карточка курса   */}
+            {/* ---------------------------------- */}
             <div className="bg-white rounded-lg shadow-md p-6 mb-8">
                 <h1 className="text-2xl font-bold mb-4">{course.title}</h1>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -160,20 +183,19 @@ const CourseViewPage = () => {
                             <p className="flex items-center">
                                 <span className="font-medium mr-2">Тип доступа:</span>
                                 <span className={`px-2 py-1 rounded-full text-sm ${
-                                    course.idmonetizationcourse === 1
+                                    course.idMonetizationCourse === 1
                                         ? 'bg-green-100 text-green-800'
                                         : 'bg-blue-100 text-blue-800'
                                 }`}>
-                  {course.idmonetizationcourse === 1 ? 'Бесплатно' : `${course.price} ₽`}
-                </span>
+                                    {course.idMonetizationCourse === 1 ? 'Бесплатно' : `${course.price} ₽`}
+                                </span>
                             </p>
                             <p>
                                 <span className="font-medium">Количество страниц:</span>{' '}
-                                {course.pages.length}
+                                {course.pagesCount}
                             </p>
                             <p>
-                                <span className="font-medium">Категория:</span>
-                                {course.category}
+                                <span className="font-medium">Категория:</span> {course.category}
                             </p>
                             <p>
                                 <span className="font-medium">Возрастное ограничение:</span>{' '}
@@ -193,7 +215,10 @@ const CourseViewPage = () => {
                             >
                                 Отмена
                             </button>
-                            {course.idmonetizationcourse === 2 && !hasPaid ? (
+
+                            {/* Логика рендеринга кнопки */}
+                            {(!isOwner && course.idMonetizationCourse === 2 && !hasPaid) ? (
+                                // Чужой платный курс без оплаты → показываем «Оплатить»
                                 <button
                                     onClick={() => setShowPaymentModal(true)}
                                     className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700"
@@ -201,6 +226,7 @@ const CourseViewPage = () => {
                                     Оплатить
                                 </button>
                             ) : (
+                                // Либо свой курс, либо бесплатный курс, либо уже оплачен → «Открыть»
                                 <button
                                     onClick={() => setCurrentPage(0)}
                                     className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700"
@@ -213,10 +239,12 @@ const CourseViewPage = () => {
                 </div>
             </div>
 
-            {/* Контент курсов */}
-            {(hasPaid || course.idmonetizationcourse === 1) && (
+            {/* ---------------------------------- */}
+            {/*   Просмотр содержимого курса      */}
+            {/* ---------------------------------- */}
+            {(hasPaid || course.idMonetizationCourse === 1 || isOwner) && (
                 <div className="bg-white rounded-lg shadow-md p-6">
-                    {/* Навигация */}
+                    {/* Навигация по страницам */}
                     <div className="flex justify-between items-center mb-6">
                         <button
                             onClick={() => setCurrentPage(currentPage - 1)}
@@ -249,15 +277,16 @@ const CourseViewPage = () => {
                         </button>
                     </div>
 
-                    {/* Контент */}
+                    {/* Markdown-превью страницы */}
                     <div className="prose max-w-none">
-                        <MarkdownPreview source={sortedPages[currentPage]?.file || ''} />
+                        <MarkdownPreview source={sortedPages[currentPage]?.fileContent || ''} />
                     </div>
-
                 </div>
             )}
 
-            {/* Модель оплаты */}
+            {/* ---------------------------------- */}
+            {/*   Модальное окно оплаты            */}
+            {/* ---------------------------------- */}
             {showPaymentModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
@@ -301,12 +330,23 @@ const CourseViewPage = () => {
                                     <div className="flex space-x-2">
                                         <input
                                             type="text"
+                                            minLength={1}
                                             maxLength={2}
                                             value={paymentData.expiryMonth}
                                             onChange={(e) => {
-                                                const value = e.target.value.replace(/\D/g, '');
-                                                if (parseInt(value) <= 12 || value === '') {
+                                                let value = e.target.value.replace(/\D/g, '');
+
+                                                // Удаляем ведущие нули и проверяем диапазон
+                                                value = value.replace(/^0+/, '');
+
+                                                if (value === '') {
                                                     setPaymentData({ ...paymentData, expiryMonth: value });
+                                                } else {
+                                                    const num = parseInt(value, 10);
+                                                    // Проверяем диапазон 1-12 и запрещаем 0 в начале
+                                                    if (num >= 1 && num <= 12) {
+                                                        setPaymentData({ ...paymentData, expiryMonth: value });
+                                                    }
                                                 }
                                             }}
                                             className="w-16 px-3 py-2 border border-gray-300 rounded-md"
@@ -318,8 +358,25 @@ const CourseViewPage = () => {
                                             maxLength={4}
                                             value={paymentData.expiryYear}
                                             onChange={(e) => {
-                                                const value = e.target.value.replace(/\D/g, '');
-                                                setPaymentData({ ...paymentData, expiryYear: value });
+                                                let value = e.target.value.replace(/\D/g, '');
+
+                                                // Разрешаем ввод только цифр и ограничиваем длину
+                                                if (value.length > 4) return;
+
+                                                // Всегда обновляем состояние для промежуточных значений
+                                                setPaymentData(prev => ({ ...prev, expiryYear: value }));
+
+                                                // Проверка полного года (4 цифры)
+                                                if (value.length === 4) {
+                                                    const year = parseInt(value, 10);
+                                                    if (year < 2025 || year > 2100) {
+                                                        // Автокоррекция при невалидном годе
+                                                        const corrected = Math.min(Math.max(year, 2025), 2100).toString();
+                                                        setTimeout(() => {
+                                                            setPaymentData(prev => ({ ...prev, expiryYear: corrected }));
+                                                        }, 0);
+                                                    }
+                                                }
                                             }}
                                             className="w-20 px-3 py-2 border border-gray-300 rounded-md"
                                             placeholder="YYYY"

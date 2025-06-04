@@ -23,7 +23,8 @@ namespace Backend_DiplomProject.Controllers
         [HttpGet("check")]
         public async Task<IActionResult> CheckPaymentStatus([FromQuery] long userId, [FromQuery] long courseId)
         {
-            var hasPaid = await _context.Pays.AnyAsync(p => p.Idusername == userId && p.Idcourse == courseId);
+            var hasPaid = await _context.Pays
+                .AnyAsync(p => p.Idusername == userId && p.Idcourse == courseId);
             return Ok(new { success = true, hasPaid });
         }
 

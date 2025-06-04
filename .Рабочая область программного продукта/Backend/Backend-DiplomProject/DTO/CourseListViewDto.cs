@@ -13,6 +13,9 @@
         public string Level { get; set; }
 
 
+        // Создатель курса
+        public long AuthorId { get; set; }
+
         // Список страниц, отсортированных по NumberPage
         public List<PageListDto> Pages { get; set; }
     }

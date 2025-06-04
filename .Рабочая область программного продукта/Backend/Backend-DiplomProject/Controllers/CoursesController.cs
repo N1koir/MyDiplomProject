@@ -25,7 +25,6 @@ namespace Backend_DiplomProject.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCourseById(long id)
         {
-            // Забираем курс вместе с навигацией: Monetization, Level, Category, Age и Pages
             var course = await _context.Courses
                 .Include(c => c.Monetization)
                 .Include(c => c.Level)
@@ -35,11 +34,8 @@ namespace Backend_DiplomProject.Controllers
                 .FirstOrDefaultAsync(c => c.Idcourse == id);
 
             if (course == null)
-            {
                 return NotFound(new { success = false, message = "Курс не найден" });
-            }
 
-            // Маппим в DTO
             var dto = new CourseListViewDto
             {
                 IdCourse = course.Idcourse,
@@ -51,13 +47,16 @@ namespace Backend_DiplomProject.Controllers
                 Category = course.Category.Type,
                 Age = course.Age.Type,
                 Level = course.Level.Type,
+
+                // Здесь добавляем AuthorId
+                AuthorId = course.Idusername,
+
                 Pages = course.Pages
                     .OrderBy(p => p.Numberpage)
                     .Select(p => new PageListDto
                     {
                         IdPage = p.Idpages,
                         NumberPage = p.Numberpage,
-                        // Конвертируем byte[] (Bytea) в строку UTF8
                         FileContent = p.File == null
                             ? string.Empty
                             : Encoding.UTF8.GetString(p.File)
