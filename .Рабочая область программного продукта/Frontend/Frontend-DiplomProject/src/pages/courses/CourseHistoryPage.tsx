@@ -15,6 +15,7 @@ interface HistoryItem {
     description: string;
     idmonetizationcourse: number;
     price?: number;
+    iconBase64?: string;
   };
 }
 
@@ -30,11 +31,11 @@ const CourseHistoryPage = () => {
   useEffect(() => {
     const fetchHistory = async () => {
       if (!user) return;
-      
+
       try {
         setIsLoading(true);
         const response = await api.get('/history', { params: { userId: user.idusername } });
-        
+
         if (response.data.success) {
           setHistoryItems(response.data.history);
           setFilteredItems(response.data.history);
@@ -46,20 +47,20 @@ const CourseHistoryPage = () => {
         setIsLoading(false);
       }
     };
-    
+
     fetchHistory();
   }, [user, showToast]);
   
   useEffect(() => {
-    // Apply search and filtering
+    // Поиск и фильтры
     let filtered = [...historyItems];
     
-    // Filter by tab
+    // Панель фильтров
     if (activeTab === 'favorites') {
       filtered = filtered.filter(item => item.viewed === 1);
     }
     
-    // Apply search
+    // Поисковик
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(
@@ -71,30 +72,30 @@ const CourseHistoryPage = () => {
     
     setFilteredItems(filtered);
   }, [historyItems, searchQuery, activeTab]);
-  
+
   const toggleFavorite = async (courseId: number) => {
     if (!user) return;
-    
+
     try {
       const item = historyItems.find(h => h.idcourse === courseId);
       if (!item) return;
-      
+
       const newViewedValue = item.viewed === 1 ? 0 : 1;
-      
+
       await api.post('/favorites', {
         idcourse: courseId,
         idusername: user.idusername,
         viewed: newViewedValue
       });
-      
-      // Update local state
-      setHistoryItems(historyItems.map(h => 
+
+      // Обновление локального состояния
+      setHistoryItems(historyItems.map(h =>
         h.idcourse === courseId ? { ...h, viewed: newViewedValue } : h
       ));
-      
+
       showToast(
-        newViewedValue === 1 
-          ? 'Курс добавлен в избранное' 
+        newViewedValue === 1
+          ? 'Курс добавлен в избранное'
           : 'Курс удален из избранного',
         'success'
       );
@@ -105,7 +106,7 @@ const CourseHistoryPage = () => {
   };
   
   if (!user) {
-    return null; // Protected route should handle this
+    return null;
   }
   
   return (
@@ -131,7 +132,7 @@ const CourseHistoryPage = () => {
         </div>
       </div>
       
-      {/* Tabs */}
+      {/* Панель */}
       <div className="flex border-b border-gray-200 mb-8">
         <button
           className={`px-4 py-2 font-medium text-sm ${
@@ -155,7 +156,7 @@ const CourseHistoryPage = () => {
         </button>
       </div>
       
-      {/* History List */}
+      {/* Списки информации */}
       {isLoading ? (
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>
@@ -163,14 +164,24 @@ const CourseHistoryPage = () => {
       ) : filteredItems.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredItems.map((item) => (
-            <div 
-              key={item.idfavoritesandhistory}
-              className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:translate-y-[-5px]"
-            >
-              <div className="h-48 bg-gray-200 flex items-center justify-center">
-                <BookOpen size={48} className="text-gray-400" />
-              </div>
-              <div className="p-6">
+              <div
+                  key={item.idfavoritesandhistory}
+                  className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:translate-y-[-5px]"
+              >
+                {/* Блок с изображением курса */}
+                <div className="h-48 bg-gray-200 flex items-center justify-center">
+                  {item.course.iconBase64 ? (
+                      <img
+                          src={`data:image/jpeg;base64,${item.course.iconBase64}`}
+                          alt={`Шапка курса ${item.course.title}`}
+                          className="w-full h-full object-cover"
+                      />
+                  ) : (
+                      <BookOpen size={48} className="text-gray-400" />
+                  )}
+                </div>
+
+                <div className="p-6">
                 <div className="flex justify-between items-center mb-2">
                   <span className={`px-2 py-1 text-xs rounded-full ${
                     item.course.idmonetizationcourse === 1 

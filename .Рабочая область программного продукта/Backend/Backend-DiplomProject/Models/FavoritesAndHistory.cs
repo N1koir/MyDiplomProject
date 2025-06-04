@@ -7,7 +7,7 @@ namespace Backend_DiplomProject.Models
     public class FavoritesAndHistory
     {
         [Key]
-        [Column("idfavoritesanhistory")]
+        [Column("idfavoritesandhistory")]
         public int Idfavoritesandhistory { get; set; }
 
         [Column("viewed")]

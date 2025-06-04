@@ -103,7 +103,7 @@ const CourseListPage = () => {
     const fetchFavorites = async () => {
       if (!user) return;
       try {
-        const response = await api.get('/favorites', {
+        const response = await api.get('/favoritesandhistory', {
           params: { userId: user.idusername },
         });
         if (response.data.success) {
@@ -378,7 +378,7 @@ const CourseListPage = () => {
             </div>
           </div>
 
-          {/* Если платный тип выбран (на фронте идёт условие selectedMonetization === 2), показываем слайдеры цен */}
+          {/* Если платный тип выбран */}
           {selectedMonetization === 2 && (
               <div className="mt-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -391,12 +391,13 @@ const CourseListPage = () => {
                       max="20000"
                       step="500"
                       value={priceRange.min}
-                      onChange={(e) =>
-                          setPriceRange({
-                            ...priceRange,
-                            min: Number(e.target.value),
-                          })
-                      }
+                      onChange={(e) => {
+                        const newMin = Number(e.target.value);
+                        setPriceRange((prev) => ({
+                          min: newMin,
+                          max: newMin > prev.max ? newMin : prev.max,
+                        }));
+                      }}
                       className="w-1/2"
                   />
                   <input
@@ -405,12 +406,13 @@ const CourseListPage = () => {
                       max="20000"
                       step="500"
                       value={priceRange.max}
-                      onChange={(e) =>
-                          setPriceRange({
-                            ...priceRange,
-                            max: Number(e.target.value),
-                          })
-                      }
+                      onChange={(e) => {
+                        const newMax = Number(e.target.value);
+                        setPriceRange((prev) => ({
+                          min: newMax < prev.min ? newMax : prev.min,
+                          max: newMax,
+                        }));
+                      }}
                       className="w-1/2"
                   />
                 </div>

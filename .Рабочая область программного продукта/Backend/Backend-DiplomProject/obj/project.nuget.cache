@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "PBK+lqeSGSk=",
+  "dgSpecHash": "n+fz2OtG1Zo=",
   "success": true,
-  "projectFilePath": "C:\\Users\\hlebu\\Desktop\\Резервы\\0.5.4\\MyDiplomProject-main\\.Рабочая область программного продукта\\Backend\\Backend-DiplomProject\\Backend-DiplomProject.csproj",
+  "projectFilePath": "C:\\Users\\hlebu\\Desktop\\Backend-DiplomProject\\Backend-DiplomProject.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\hlebu\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\hlebu\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\9.0.5\\microsoft.aspnetcore.authentication.jwtbearer.9.0.5.nupkg.sha512",

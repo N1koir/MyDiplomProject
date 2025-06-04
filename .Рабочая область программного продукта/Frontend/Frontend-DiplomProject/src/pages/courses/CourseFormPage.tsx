@@ -139,8 +139,8 @@ const CourseFormPage = () => {
                     courseData.title.trim() !== '' &&
                     courseData.description.trim() !== '' &&
 
-                    (courseData.icon !== undefined && courseData.icon !== null ||
-                        courseData.iconPreview !== undefined && courseData.iconPreview !== null)
+                    courseData.icon !== null &&
+                    courseData.icon !== undefined
                 );
             case 2:
                 return courseData.pages.every(page => page.content.trim() !== '');
