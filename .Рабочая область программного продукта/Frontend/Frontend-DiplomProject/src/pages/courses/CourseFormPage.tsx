@@ -11,6 +11,7 @@ interface CourseData {
     title: string;
     description: string;
     icon?: File;
+    iconPreview?: string;
     pages: {
         content: string;
         order: number;
@@ -39,12 +40,15 @@ const CourseFormPage = () => {
     const [courseData, setCourseData] = useState<CourseData>({
         title: '',
         description: '',
+        icon: null as File | null,
+        iconPreview: '',
         pages: [{ content: '', order: 1 }],
         monetizationType: 0,
         category: 0,
         ageRestriction: 0,
         level: 0
     });
+
 
     // Опции для селектов
     const [categories, setCategories] = useState<SelectOption[]>([]);
@@ -84,19 +88,36 @@ const CourseFormPage = () => {
                 const response = await api.get(`/coursescontrollercreateandedit/${id}`);
                 const course = response.data;
 
+                const base64ToFile = (base64: string, filename: string, mimeType: string) => {
+                    const byteString = atob(base64.split(',')[1]);
+                    const ab = new ArrayBuffer(byteString.length);
+                    const ia = new Uint8Array(ab);
+                    for (let i = 0; i < byteString.length; i++) {
+                        ia[i] = byteString.charCodeAt(i);
+                    }
+                    return new File([ab], filename, { type: mimeType });
+                };
+
+                const iconFile = base64ToFile(course.iconBase64, 'icon.png', 'image/png');
+
                 setCourseData({
                     title: course.title,
                     description: course.description || '',
                     pages: course.pages.map((p: any) => ({
-                        content: p.file,
-                        order: p.numberpage
+                        content: p.content,
+                        order: p.order
                     })),
-                    monetizationType: course.idmonetizationcourse,
+                    monetizationType: course.monetizationType,
                     price: course.price,
-                    category: course.idcategory,
-                    ageRestriction: course.idagepeople,
-                    level: course.idlevelknowledge
+                    category: course.category,
+                    ageRestriction: course.ageRestriction,
+                    level: course.level,
+                    icon: iconFile,
+                    iconPreview: course.iconBase64
                 });
+
+
+
             } catch (error) {
                 console.error('Ошибка при загрузки курса:', error);
                 showToast('Ошибка при загрузке курса', 'error');
@@ -118,8 +139,8 @@ const CourseFormPage = () => {
                     courseData.title.trim() !== '' &&
                     courseData.description.trim() !== '' &&
 
-                    courseData.icon !== null &&
-                    courseData.icon !== undefined
+                    (courseData.icon !== undefined && courseData.icon !== null ||
+                        courseData.iconPreview !== undefined && courseData.iconPreview !== null)
                 );
             case 2:
                 return courseData.pages.every(page => page.content.trim() !== '');
@@ -232,8 +253,11 @@ const CourseFormPage = () => {
             const formData = new FormData();
             formData.append('title', courseData.title);
             formData.append('description', courseData.description);
-            if (courseData.icon) {
-                formData.append('icon', courseData.icon);
+
+            if (courseData.icon instanceof File) {
+                formData.append('Icon', courseData.icon);
+            } else {
+                console.log("Icon отсутствует, и не будет отправлена.");
             }
 
             formData.append('idusername', user.idusername.toString());
@@ -265,6 +289,15 @@ const CourseFormPage = () => {
         } catch (error) {
             console.error('Ошибка сохранения:', error);
             showToast('Ошибка при сохранении курса', 'error');
+
+            if (error.response && error.response.data && error.response.data.errors) {
+                console.error('Ошибки валидации:', error.response.data.errors);
+            }
+
+            console.log("icon typeof:", typeof courseData.icon);
+            console.log("icon value:", courseData.icon);
+
+
         } finally {
             setIsLoading(false);
         }
@@ -338,32 +371,36 @@ const CourseFormPage = () => {
                                         <ImageIcon size={20} className="mr-2" />
                                         Загрузить
                                         <input
-                                            type="file"
                                             className="hidden"
-                                            accept="image/jpeg,image/png"
+                                            type="file"
+                                            accept="image/*"
                                             onChange={handleImageUpload}
                                         />
                                     </label>
-                                    {courseData.icon && (
+                                    {(courseData.icon || courseData.iconPreview) && (
                                         <div className="relative w-16 h-16">
                                             <img
-                                                src={URL.createObjectURL(courseData.icon)}
+                                                src={
+                                                    courseData.icon
+                                                        ? URL.createObjectURL(courseData.icon)
+                                                        : courseData.iconPreview!
+                                                }
                                                 alt="Preview"
                                                 className="w-full h-full object-cover rounded-md"
                                             />
                                             <button
-                                                onClick={() => {
-                                                    setCourseData({ ...courseData, icon: null });
-                                                    if (fileInputRef.current) {
-                                                        fileInputRef.current.value = '';
-                                                    }
-                                                }}
+                                                onClick={() => setCourseData({
+                                                    ...courseData,
+                                                    icon: undefined,
+                                                    iconPreview: undefined
+                                                })}
                                                 className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
                                             >
                                                 <Minus size={12} />
                                             </button>
                                         </div>
                                     )}
+
                                 </div>
                                 <p className="mt-1 text-sm text-gray-500">
                                     Форматы: JPEG, PNG. Макс. размер: 6 МБ. Разрешение: 300x300 пикселей

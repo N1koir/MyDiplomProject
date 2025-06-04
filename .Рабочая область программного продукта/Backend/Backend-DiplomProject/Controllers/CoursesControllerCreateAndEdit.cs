@@ -19,6 +19,11 @@ namespace Backend_DiplomProject.Controllers
         private readonly AppDbContext _context;
         public CoursesControllerCreateAndEdit(AppDbContext context) => _context = context;
 
+        /// <summary>
+        /// Создание курса
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> CreateCourse([FromForm] CourseFormDto dto)
         {
@@ -107,7 +112,7 @@ namespace Backend_DiplomProject.Controllers
         }
 
         /// <summary>
-        /// Обновление курса
+        /// Редактирование курса
         /// </summary>
         /// <param name="id"></param>
         /// <param name="dto"></param>
@@ -126,6 +131,7 @@ namespace Backend_DiplomProject.Controllers
 
             courseEntity.Title = dto.Title;
             courseEntity.Description = dto.Description;
+            courseEntity.Dateadd = DateTime.UtcNow.Date;
 
             if (dto.Icon != null)
             {
@@ -202,6 +208,53 @@ namespace Backend_DiplomProject.Controllers
             }
 
             return Ok(new { message = "Курс успешно обновлён", idcourse = courseEntity.Idcourse });
+        }
+
+        /// <summary>
+        /// Загрузка для редактирования курса
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetCourse(long id)
+        {
+            var courseEntity = await _context.Courses
+                .AsNoTracking()
+                .Include(c => c.Pages)
+                .FirstOrDefaultAsync(c => c.Idcourse == id);
+
+            if (courseEntity == null)
+                return NotFound(new { message = $"Курс с id={id} не найден." });
+
+            // Конвертация иконки (byte[]) в base64 data URI (если есть)
+            string? iconUri = null;
+            if (courseEntity.Icon != null && courseEntity.Icon.Length > 0)
+            {
+                iconUri = $"data:image/png;base64,{Convert.ToBase64String(courseEntity.Icon)}";
+            }
+
+            var dto = new CourseDetailDto
+            {
+                IdCourse = courseEntity.Idcourse,
+                Title = courseEntity.Title,
+                Description = courseEntity.Description,
+                MonetizationType = courseEntity.Idmonetizationcourse,
+                Price = courseEntity.Price,
+                Category = courseEntity.Idcategory,
+                AgeRestriction = courseEntity.Idagepeople,
+                Level = courseEntity.Idlevelknowledge,
+                IconBase64 = iconUri,
+                Pages = courseEntity.Pages
+                    .OrderBy(p => p.Numberpage)
+                    .Select(p => new PageDetailDto
+                    {
+                        Order = p.Numberpage,
+                        Content = Encoding.UTF8.GetString(p.File)
+                    })
+                    .ToList()
+            };
+
+            return Ok(dto);
         }
     }
 }

@@ -26,7 +26,7 @@ const CourseEditorPage = () => {
   const [password, setPassword] = useState('');
   const [showPasswordModal, setShowPasswordModal] = useState(false);
 
-  // 1. Загрузка курсов пользователя и маппинг полей
+  // Загрузка курсов пользователя и маппинг полей
   useEffect(() => {
     const fetchUserCourses = async () => {
       if (!user) return;
@@ -54,24 +54,22 @@ const CourseEditorPage = () => {
     fetchUserCourses();
   }, [user, showToast]);
 
-  // 2. Фильтрация курсов по полю title
+  // Фильтрация курсов по полю title
   const filteredCourses = courses.filter(course =>
       course.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // 3. Обработка удаления курса
+  // Обработка удаления курса
   const handleDelete = async () => {
     if (!selectedCourse || !user) return;
 
     try {
-      // 1) Проверяем пароль
       const response = await api.post('/auth/verify-password', {
         idusername: user.idusername,
         password
       });
 
       if (response.data.success) {
-        // 2) Если пароль верный — удаляем курс
         await api.delete(`/CoursesControllerEditList/${selectedCourse.idcourse}`);
         setCourses(courses.filter(c => c.idcourse !== selectedCourse.idcourse));
         showToast('Курс успешно удален', 'success');

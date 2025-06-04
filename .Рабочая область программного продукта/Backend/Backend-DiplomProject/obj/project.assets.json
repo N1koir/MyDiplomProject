@@ -3899,11 +3899,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\hlebu\\Desktop\\Backend-DiplomProject\\Backend-DiplomProject.csproj",
+      "projectUniqueName": "C:\\Users\\hlebu\\Desktop\\Резервы\\0.5.4\\MyDiplomProject-main\\.Рабочая область программного продукта\\Backend\\Backend-DiplomProject\\Backend-DiplomProject.csproj",
       "projectName": "Backend-DiplomProject",
-      "projectPath": "C:\\Users\\hlebu\\Desktop\\Backend-DiplomProject\\Backend-DiplomProject.csproj",
+      "projectPath": "C:\\Users\\hlebu\\Desktop\\Резервы\\0.5.4\\MyDiplomProject-main\\.Рабочая область программного продукта\\Backend\\Backend-DiplomProject\\Backend-DiplomProject.csproj",
       "packagesPath": "C:\\Users\\hlebu\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\hlebu\\Desktop\\Backend-DiplomProject\\obj\\",
+      "outputPath": "C:\\Users\\hlebu\\Desktop\\Резервы\\0.5.4\\MyDiplomProject-main\\.Рабочая область программного продукта\\Backend\\Backend-DiplomProject\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
