@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 129.38 129.38">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+        font-family: RobotoRoman-Medium, Roboto;
+        font-size: 72px;
+        font-variation-settings: 'wght' 500, 'wdth' 100;
+        font-weight: 500;
+      }
+
+      .cls-2 {
+        fill: #111827;
+        stroke: #1d1d1b;
+        stroke-miterlimit: 10;
+      }
+
+      .cls-3 {
+        fill: #ee7221;
+        font-family: RobotoRoman-SemiBold, Roboto;
+        font-size: 88px;
+        font-variation-settings: 'wght' 600, 'wdth' 100;
+        font-weight: 600;
+      }
+    </style>
+  </defs>
+  <g id="_Иконка" data-name="Иконка">
+    <circle class="cls-2" cx="64.69" cy="64.69" r="64.19"/>
+  </g>
+  <g id="_Текст" data-name="Текст">
+    <g>
+      <text class="cls-1" transform="translate(23.28 91.69)"><tspan x="0" y="0">K</tspan></text>
+      <text class="cls-3" transform="translate(64.7 94.19)"><tspan x="0" y="0">+</tspan></text>
+    </g>
+  </g>
+</svg>
