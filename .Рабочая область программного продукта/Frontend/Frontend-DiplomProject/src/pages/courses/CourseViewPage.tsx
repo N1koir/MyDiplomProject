@@ -171,9 +171,7 @@ const CourseViewPage = () => {
 
     return (
         <div className="container mx-auto px-4 py-8">
-            {/* ---------------------------------- */}
-            {/*   Информационная карточка курса   */}
-            {/* ---------------------------------- */}
+            {/* Информационная карточка курса */}
             <div className="bg-white rounded-lg shadow-md p-6 mb-8">
                 <h1 className="text-2xl font-bold mb-4">{course.title}</h1>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -239,9 +237,7 @@ const CourseViewPage = () => {
                 </div>
             </div>
 
-            {/* ---------------------------------- */}
-            {/*   Просмотр содержимого курса      */}
-            {/* ---------------------------------- */}
+            {/* Просмотр содержимого курса */}
             {(hasPaid || course.idMonetizationCourse === 1 || isOwner) && (
                 <div className="bg-white rounded-lg shadow-md p-6">
                     {/* Навигация по страницам */}
@@ -284,9 +280,7 @@ const CourseViewPage = () => {
                 </div>
             )}
 
-            {/* ---------------------------------- */}
-            {/*   Модальное окно оплаты            */}
-            {/* ---------------------------------- */}
+            {/* Модальное окно оплаты */}
             {showPaymentModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">

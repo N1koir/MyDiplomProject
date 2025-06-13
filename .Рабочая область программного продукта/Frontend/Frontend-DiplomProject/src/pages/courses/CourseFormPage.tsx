@@ -1,54 +1,216 @@
-﻿import { useState, useEffect } from 'react';
+﻿import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../contexts/ToastContext';
-import {ChevronLeft, ChevronRight, Image as ImageIcon, Plus, Minus, ChevronDown, Trash2, ChevronUp} from 'lucide-react';
-import MarkdownEditor from '@uiw/react-markdown-editor';
+import {
+    ChevronLeft, ChevronRight, Image as ImageIcon,
+    Plus, Minus, ChevronDown, Trash2, ChevronUp
+} from 'lucide-react';
+import { marked } from 'marked';
 import MarkdownPreview from '@uiw/react-markdown-preview';
 import { api } from '../../services/api';
+import DOMPurify from 'dompurify';
 
-interface CourseData {
-    title: string;
-    description: string;
-    icon?: File;
-    iconPreview?: string;
-    pages: {
-        content: string;
-        order: number;
-    }[];
-    monetizationType: number;
-    price?: number;
-    category: number;
-    ageRestriction: number;
-    level: number;
-}
+
+    interface CourseData {
+        title: string;
+        description: string;
+        icon?: File | null;
+        iconPreview?: string;
+        pages: {
+            content: string;
+            order: number;
+            previewExpanded: boolean;
+        }[];
+        monetizationType: number;
+        price?: number;
+        category: number;
+        ageRestriction: number;
+        level: number;
+    }
 
 interface SelectOption {
     id: number;
     type: string;
 }
 
-const CourseFormPage = () => {
+const SUPPORTED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+
+const debounce = <F extends (...args: any[]) => any>(func: F, waitFor: number) => {
+    let timeout: ReturnType<typeof setTimeout> | null = null;
+    return (...args: Parameters<F>): void => {
+        if (timeout) clearTimeout(timeout);
+        timeout = setTimeout(() => func(...args), waitFor);
+    };
+};
+
+export const CourseFormPage: React.FC = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { user } = useAuth();
     const { showToast } = useToast();
+
     const [step, setStep] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
 
-    // Данные курса
+    // Основной стейт курса
     const [courseData, setCourseData] = useState<CourseData>({
         title: '',
         description: '',
-        icon: null as File | null,
+        icon: null,
         iconPreview: '',
-        pages: [{ content: '', order: 1 }],
+        pages: [{ content: '', order: 1, previewExpanded: false }],
         monetizationType: 0,
         category: 0,
         ageRestriction: 0,
         level: 0
     });
 
+    // refs для textarea и file inputs
+    const textareaRefs = useRef<(HTMLTextAreaElement | null)[]>([]);
+    const fileInputs = useRef<(HTMLInputElement | null)[]>([]);
+
+    // для показа какой страницы сейчас открыт превью
+    const [currentPageIndex, setCurrentPageIndex] = useState(0);
+
+    // хранит html-превью по индексам
+    const [pagesHtml, setPagesHtml] = useState<Record<number, string>>({});
+
+    // настройка marked с videoExtension
+    useEffect(() => {
+        marked.use({
+            extensions: [{
+                name: 'videoExtension',
+                level: 'block',
+                start(src) { return src.indexOf('%%VIDEO{') !== -1 ? src.indexOf('%%VIDEO{') : undefined; },
+                tokenizer(src) {
+                    const rule = /^%%VIDEO\{([^}]+)\}%%/;
+                    const match = rule.exec(src);
+                    if (match) {
+                        return { type: 'videoExtension', raw: match[0], url: match[1].trim() };
+                    }
+                },
+                renderer(token) {
+                    return `<video controls src="${token.url}" style="max-width:100%;"></video>`;
+                }
+            }]
+        });
+    }, []);
+
+    // безопасный рендер markdown → html
+    const safeMarkdown = async (content: string): Promise<string> => {
+        try {
+            const withNbsp = content
+                .replace(/\n\s*\n/g, '\n\n&nbsp;\n\n')
+                .replace(/^(\s*\n)+/g, '&nbsp;\n')
+                .replace(/(\n\s*)+$/g, '\n&nbsp;');
+
+            const rawHtml = await marked.parse(withNbsp, {
+                mangle: false,
+                headerIds: false,
+                breaks: true,
+                silent: true
+            });
+
+            return DOMPurify.sanitize(rawHtml, {
+                ADD_TAGS: ['img', 'iframe'],
+                ADD_ATTR: ['src', 'alt', 'title', 'allow', 'allowfullscreen', 'frameborder', 'scrolling'],
+                FORBID_TAGS: ['style'],
+                FORBID_ATTR: ['style']
+            });
+        } catch (err) {
+            console.error('Markdown processing error:', err);
+            return `<div class="error">Ошибка отображения контента</div>`;
+        }
+    };
+
+    // обновление превью конкретной страницы
+    const updatePagePreview = useCallback(
+        async (content: string, pageIndex: number) => {
+            const html = await safeMarkdown(content);
+            setPagesHtml(prev => ({ ...prev, [pageIndex]: html }));
+        },
+        []
+    );
+
+    // при любых изменениях содержимого страниц автоматически обновляем превью
+    useEffect(() => {
+        courseData.pages.forEach((p, idx) => {
+            updatePagePreview(p.content, idx);
+        });
+    }, [courseData.pages, updatePagePreview]);
+
+    // хелпер вставки форматирования / медиа
+    const insertAtCursor = (index: number, template: string) => {
+        const ta = textareaRefs.current[index];
+        if (!ta) return;
+        const start = ta.selectionStart, end = ta.selectionEnd;
+        const text = ta.value;
+        const sel = text.substring(start, end);
+        const newText = text.substring(0, start)
+            + template.replace('$SELECTION', sel)
+            + text.substring(end);
+        const pages = [...courseData.pages];
+        pages[index].content = newText;
+        setCourseData({ ...courseData, pages });
+        setTimeout(() => {
+            ta.focus();
+            const pos = start + template.length;
+            ta.setSelectionRange(pos, pos);
+        }, 0);
+    };
+
+    // сжатие изображения в blob
+    const compressImage = (file: File, maxW: number, maxH: number, q: number) =>
+        new Promise<Blob>((resolve, reject) => {
+            if (!file.type.startsWith('image/')) return reject(new Error('Не изображение'));
+            const img = new Image();
+            const reader = new FileReader();
+            reader.onerror = () => reject(new Error('Ошибка чтения'));
+            reader.onload = e => img.src = e.target?.result as string;
+            img.onerror = () => reject(new Error('Ошибка загрузки img'));
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let w = img.width, h = img.height;
+                const ar = w / h;
+                if (w > h && w > maxW) { w = maxW; h = w / ar; }
+                else if (h > maxH) { h = maxH; w = h * ar; }
+                canvas.width = Math.floor(w); canvas.height = Math.floor(h);
+                const ctx = canvas.getContext('2d');
+                if (!ctx) return reject(new Error('Нет контекста'));
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Не blob')), file.type, q);
+            };
+            reader.readAsDataURL(file);
+        });
+
+    // вставка медиа-файла
+    const handleInsertMedia = async (file: File, pageIndex: number) => {
+        try {
+            let dataUrl: string;
+            if (file.type.startsWith('image/')) {
+                const blob = await compressImage(file, 800, 800, 0.7);
+                dataUrl = await new Promise<string>(res => {
+                    const r = new FileReader();
+                    r.onload = e => res(e.target?.result as string);
+                    r.readAsDataURL(blob);
+                });
+            } else {
+                dataUrl = await new Promise<string>(res => {
+                    const r = new FileReader();
+                    r.onload = e => res(e.target?.result as string);
+                    r.readAsDataURL(file);
+                });
+            }
+            const md = file.type.startsWith('image/')
+                ? `![${file.name}](${dataUrl})`
+                : `%%VIDEO{${dataUrl}}%%`;
+            insertAtCursor(pageIndex, md);
+        } catch {
+            showToast('Не удалось обработать файл', 'error');
+        }
+    };
 
     // Опции для селектов
     const [categories, setCategories] = useState<SelectOption[]>([]);
@@ -105,7 +267,8 @@ const CourseFormPage = () => {
                     description: course.description || '',
                     pages: course.pages.map((p: any) => ({
                         content: p.content,
-                        order: p.order
+                        order: p.order,
+                        previewExpanded: false
                     })),
                     monetizationType: course.monetizationType,
                     price: course.price,
@@ -115,8 +278,6 @@ const CourseFormPage = () => {
                     icon: iconFile,
                     iconPreview: course.iconBase64
                 });
-
-
 
             } catch (error) {
                 console.error('Ошибка при загрузки курса:', error);
@@ -205,13 +366,22 @@ const CourseFormPage = () => {
 
     // Добавление новой страницы
     const addPage = () => {
+        const newPage = {
+            content: '',
+            order: courseData.pages.length + 1,
+            previewExpanded: false
+        };
+
         setCourseData({
             ...courseData,
-            pages: [
-                ...courseData.pages,
-                { content: '', order: courseData.pages.length + 1 }
-            ]
+            pages: [...courseData.pages, newPage]
         });
+
+        // Инициализируем состояние предпросмотра для новой страницы
+        setPagesHtml(prev => ({
+            ...prev,
+            [courseData.pages.length]: "" // Индекс новой страницы
+        }));
     };
 
     // Удаление страницы
@@ -222,9 +392,27 @@ const CourseFormPage = () => {
         }
 
         const newPages = courseData.pages.filter((_, i) => i !== index);
+
+        // Обновляем порядковые номера
+        const reorderedPages = newPages.map((page, i) => ({
+            ...page,
+            order: i + 1
+        }));
+
         setCourseData({
             ...courseData,
-            pages: newPages.map((page, i) => ({ ...page, order: i + 1 }))
+            pages: reorderedPages
+        });
+
+        // Очищаем рефы
+        textareaRefs.current.splice(index, 1);
+        fileInputs.current.splice(index, 1);
+
+        // Обновляем предпросмотр
+        setPagesHtml(prev => {
+            const newPagesHtml = { ...prev };
+            delete newPagesHtml[index];
+            return newPagesHtml;
         });
     };
 
@@ -251,29 +439,62 @@ const CourseFormPage = () => {
         try {
             setIsLoading(true);
             const formData = new FormData();
+
+            // Добавляем основные данные
             formData.append('title', courseData.title);
             formData.append('description', courseData.description);
-
-            if (courseData.icon instanceof File) {
-                formData.append('Icon', courseData.icon);
-            } else {
-                console.log("Icon отсутствует, и не будет отправлена.");
-            }
-
             formData.append('idusername', user.idusername.toString());
             formData.append('idmonetizationcourse', courseData.monetizationType.toString());
+            formData.append('idcategory', courseData.category.toString());
+            formData.append('idagepeople', courseData.ageRestriction.toString());
+            formData.append('idlevelknowledge', courseData.level.toString());
 
+            // Обработка цены
             if (courseData.monetizationType === 2 && courseData.price) {
                 formData.append('price', courseData.price.toString());
             }
 
-            formData.append('idcategory', courseData.category.toString());
-            formData.append('idagepeople', courseData.ageRestriction.toString());
-            formData.append('idlevelknowledge', courseData.level.toString());
-            formData.append('pages', JSON.stringify(courseData.pages));
+            // Обработка иконки
+            if (courseData.icon instanceof File) {
+                formData.append('Icon', courseData.icon);
+            }
 
+            // Обработка страниц и медиа
+            const pagesWithMedia = await Promise.all(courseData.pages.map(async (page) => {
+                // Извлекаем все медиа-идентификаторы из контента
+                const mediaIds = [
+                    ...page.content.matchAll(/%%VIDEO\{([^}]+)\}%%/g),
+                    ...page.content.matchAll(/!\[[^\]]*\]\(([^)]+)\)/g)
+                ].map(match => match[1]);
+
+                // Заменяем идентификаторы на фактические URL
+                let processedContent = page.content;
+                for (const mediaId of mediaIds) {
+                    const mediaUrl = sessionStorage.getItem(mediaId);
+                    if (mediaUrl) {
+                        // Сохраняем медиа в FormData
+                        const blob = await fetch(mediaUrl).then(r => r.blob());
+                        const file = new File([blob], `${mediaId}.${blob.type.split('/')[1]}`, { type: blob.type });
+                        formData.append(`media_${mediaId}`, file);
+
+                        // Заменяем в контенте
+                        processedContent = processedContent.replace(
+                            mediaId,
+                            `media_${mediaId}`
+                        );
+                    }
+                }
+
+                return {
+                    ...page,
+                    content: processedContent
+                };
+            }));
+
+            formData.append('pages', JSON.stringify(pagesWithMedia));
+
+            // Отправка данных
             if (id && id !== 'new') {
-                // Можно добавить явное указание: multipart/form-data (необязательно, Axios сам определит)
                 await api.put(`/coursescontrollercreateandedit/${id}`, formData, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 });
@@ -285,19 +506,17 @@ const CourseFormPage = () => {
                 showToast('Курс успешно создан', 'success');
             }
 
+            // Очищаем временное хранилище
+            Object.keys(sessionStorage).forEach(key => {
+                if (key.startsWith('media_')) {
+                    sessionStorage.removeItem(key);
+                }
+            });
+
             navigate('/courses/editor');
         } catch (error) {
             console.error('Ошибка сохранения:', error);
             showToast('Ошибка при сохранении курса', 'error');
-
-            if (error.response && error.response.data && error.response.data.errors) {
-                console.error('Ошибки валидации:', error.response.data.errors);
-            }
-
-            console.log("icon typeof:", typeof courseData.icon);
-            console.log("icon value:", courseData.icon);
-
-
         } finally {
             setIsLoading(false);
         }
@@ -410,58 +629,144 @@ const CourseFormPage = () => {
                     </div>
                 )}
 
-                {/* Шаг 2: Редактор Markdown */}
                 {step === 2 && (
                     <div className="bg-white rounded-lg shadow-md p-6">
                         <h2 className="text-2xl font-bold mb-6">Содержание курса</h2>
-
                         <div className="space-y-8">
                             {courseData.pages.map((page, index) => (
-                                <div key={index} className="border rounded-lg p-4">
-                                    <div className="flex justify-between items-center mb-4">
-                                        <h3 className="text-lg font-medium">
-                                            Страница {page.order}
-                                        </h3>
+                                <div key={index} className="border rounded-lg">
+                                    <div className="flex justify-between items-center p-4 bg-gray-50 sticky top-0 z-10">
+                                        <h3 className="text-lg font-medium">Страница {page.order}</h3>
                                         <div className="flex items-center space-x-2">
-                                            <button
-                                                onClick={() => movePage(index, 'up')}
-                                                disabled={index === 0}
-                                                className="p-1 hover:bg-gray-100 rounded-md disabled:opacity-50"
-                                            >
+                                            {/* Кнопки перемещения страниц */}
+                                            <button onClick={() => movePage(index, 'up')}
+                                                    disabled={index===0}
+                                                    className="p-1 hover:bg-gray-100 rounded-md disabled:opacity-50">
                                                 <ChevronUp size={20} />
                                             </button>
-                                            <button
-                                                onClick={() => movePage(index, 'down')}
-                                                disabled={index === courseData.pages.length - 1}
-                                                className="p-1 hover:bg-gray-100 rounded-md disabled:opacity-50"
-                                            >
+                                            <button onClick={() => movePage(index, 'down')}
+                                                    disabled={index===courseData.pages.length-1}
+                                                    className="p-1 hover:bg-gray-100 rounded-md disabled:opacity-50">
                                                 <ChevronDown size={20} />
                                             </button>
-                                            <button
-                                                onClick={() => removePage(index)}
-                                                className="p-1 text-red-500 hover:bg-red-50 rounded-md"
-                                            >
+                                            <button onClick={() => removePage(index)}
+                                                    className="p-1 text-red-500 hover:bg-red-50 rounded-md">
                                                 <Trash2 size={20} />
                                             </button>
+
+                                            {/* Кнопки форматирования */}
+                                            <button
+                                                onClick={() => insertAtCursor(index, `**$SELECTION**`)}
+                                                className="p-1 hover:bg-gray-100 rounded-md"
+                                                title="Жирный"
+                                            >
+                                                <strong>B</strong>
+                                            </button>
+                                            <button
+                                                onClick={() => insertAtCursor(index, `*$SELECTION*`)}
+                                                className="p-1 hover:bg-gray-100 rounded-md"
+                                                title="Курсив"
+                                            >
+                                                <em>I</em>
+                                            </button>
+                                            <button
+                                                onClick={() => insertAtCursor(index, "~~$SELECTION~~")}
+                                                className="p-1 hover:bg-gray-100 rounded-md"
+                                                title="Зачёркнутый"
+                                            >
+                                                <s>S</s>
+                                            </button>
+                                            <button
+                                                onClick={() => insertAtCursor(index, `<u>$SELECTION</u>`)}
+                                                className="p-1 hover:bg-gray-100 rounded-md"
+                                                title="Подчёркнутый"
+                                            >
+                                                <span className="underline">U</span>
+                                            </button>
+                                            <button
+                                                onClick={() => insertAtCursor(index, "```\n$SELECTION\n```\n")}
+                                                className="p-1 hover:bg-gray-100 rounded-md"
+                                                title="Блок кода"
+                                            >
+                                                <code>{"</>"}</code>
+                                            </button>
+                                            <button onClick={() => fileInputs.current[index]?.click()}
+                                                    className="p-1 hover:bg-gray-100 rounded-md"
+                                                    title="Медиа">
+                                                <ImageIcon size={20} />
+                                            </button>
+                                            <input
+                                                type="file"
+                                                accept=".jpg,.jpeg,.png,.gif"
+                                                className="hidden"
+                                                ref={el => fileInputs.current[index] = el}
+                                                onChange={(e) => {
+                                                    const file = e.target.files?.[0];
+                                                    if (!file) return;
+                                                    if (!SUPPORTED_TYPES.includes(file.type)) {
+                                                        showToast('Неподдерживаемый формат', 'error');
+                                                        return;
+                                                    }
+                                                    handleInsertMedia(file, index);
+                                                    e.target.value = '';
+                                                }}
+                                            />
                                         </div>
                                     </div>
 
-                                    <div className="h-[500px] border rounded-lg overflow-hidden">
-                                        <MarkdownEditor
+                                    {/* Редактор Markdown */}
+                                    <div className="p-4">
+                                        <textarea
+                                            ref={el => textareaRefs.current[index] = el}
                                             value={page.content}
-                                            onChange={(value) => {
-                                                const newPages = [...courseData.pages];
-                                                newPages[index].content = value;
-                                                setCourseData({ ...courseData, pages: newPages });
+                                            onChange={e => {
+                                                const pagesCopy = [...courseData.pages];
+                                                pagesCopy[index].content = e.target.value;
+                                                setCourseData({ ...courseData, pages: pagesCopy });
                                             }}
-                                            enablePreview
-                                            toolbars={[
-                                                'bold', 'italic', 'strikethrough',
-                                                'heading-1', 'heading-2', 'heading-3',
-                                                'unordered-list', 'ordered-list',
-                                                'link', 'image', 'code'
-                                            ]}
+                                            className="w-full min-h-[300px] p-3 font-mono text-sm border rounded-md"
                                         />
+                                    </div>
+
+                                    {/* Предпросмотр */}
+                                    <div className="border-t">
+                                        <button
+                                            onClick={() => {
+                                                const pagesCopy = [...courseData.pages];
+                                                pagesCopy[index].previewExpanded = !pagesCopy[index].previewExpanded;
+                                                setCourseData({ ...courseData, pages: pagesCopy });
+
+                                                // Вариант 1: всегда обновлять превью
+                                                if (pagesCopy[index].previewExpanded) {
+                                                    updatePagePreview(pagesCopy[index].content, index);
+                                                }
+
+                                                // — или Вариант 2: только при первом раскрытии
+                                                // if (pagesCopy[index].previewExpanded && pagesHtml[index] === undefined) {
+                                                //   updatePagePreview(pagesCopy[index].content, index);
+                                                // }
+                                            }}
+                                            className="w-full p-3 bg-gray-100 hover:bg-gray-200 text-left font-medium flex items-center"
+                                        >
+                                            <span>Предпросмотр</span>
+                                            <ChevronDown
+                                                size={20}
+                                                className={`ml-2 transition-transform ${page.previewExpanded ? 'rotate-180' : ''}`}
+                                            />
+                                        </button>
+
+                                        {/* Само окно превью */}
+                                        {page.previewExpanded && (
+                                            <div id={`preview-${index}`} className="prose p-4">
+                                                {pagesHtml[index] === undefined ? (
+                                                    <div>Загрузка превью…</div>
+                                                ) : pagesHtml[index] ? (
+                                                    <div dangerouslySetInnerHTML={{ __html: pagesHtml[index] }} />
+                                                ) : (
+                                                    <div><em>Нет содержимого</em></div>
+                                                )}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             ))}

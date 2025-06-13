@@ -3,7 +3,7 @@
 // Создание api
 const api = axios.create({
   baseURL: '/api',
-  timeout: 10000
+  timeout: 300000
 });
 
 // Вывод ошибок от API

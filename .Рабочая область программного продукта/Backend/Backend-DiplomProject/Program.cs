@@ -99,6 +99,12 @@ namespace Backend_DiplomProject
                         .EnableSensitiveDataLogging());
             }
 
+            // Увеличивание лимитов данных
+            builder.Services.Configure<IISServerOptions>(options =>
+            {
+                options.MaxRequestBodySize = 500 * 1024 * 1024; // 500MB
+            });
+
             // Метод для применения миграций и проверки БД
             async Task ApplyMigrationsAndCheckDb(WebApplication app)
             {
