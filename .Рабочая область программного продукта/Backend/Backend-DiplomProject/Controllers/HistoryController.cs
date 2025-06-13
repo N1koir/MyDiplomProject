@@ -17,6 +17,12 @@ namespace Backend_DiplomProject.Controllers
             _context = context;
         }
 
+
+        /// <summary>
+        /// Загрузка списка "Истории курсов"
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetHistory([FromQuery] long userId)
         {

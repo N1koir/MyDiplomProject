@@ -25,7 +25,6 @@ namespace Backend_DiplomProject
 
             var app = builder.Build();
 
-            // Настройка middleware
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseCors("ViteReactPolicy");

@@ -14,7 +14,7 @@ const HomePage = () => {
         <div className="container mx-auto px-4 py-16 md:py-24">
           <div className="max-w-4xl mx-auto text-center">
             <span className="inline-block px-3 py-1 text-sm bg-orange-600 rounded-full mb-4">
-              Универсальная платформа образования
+              Универсальная платформа обучения
             </span>
             <h1 className="text-3xl md:text-5xl font-bold mb-6">
               Создавайте и изучайте курсы на <span className="text-orange-500">Knowledge+</span>

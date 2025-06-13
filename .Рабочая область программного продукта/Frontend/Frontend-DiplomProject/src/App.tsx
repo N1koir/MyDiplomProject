@@ -62,7 +62,7 @@ function App() {
                 <Route path="/courses" element={<CourseListPage />} />
                 <Route path="/courses/:id" element={<CourseViewPage />} />
 
-                {/* Protected routes */}
+                {/* Большие модули */}
                 <Route path="/profile" element={
                   <ProtectedRoute>
                     <ProfilePage />
