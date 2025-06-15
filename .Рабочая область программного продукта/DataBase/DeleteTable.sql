@@ -1,4 +1,7 @@
 DROP TABLE IF EXISTS 
+    support,
+    typestatussupport,
+    typesupport,
     pages,
     favoritesandhistory,
     pay,

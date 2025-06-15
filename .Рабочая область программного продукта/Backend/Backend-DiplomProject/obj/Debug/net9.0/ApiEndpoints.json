@@ -1360,6 +1360,359 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "Backend_DiplomProject.Controllers.SupportController",
+    "Method": "Create",
+    "RelativePath": "api/support",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "Backend_DiplomProject.DTO.SupportDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend_DiplomProject.Controllers.SupportTypesController",
+    "Method": "GetAll",
+    "RelativePath": "api/support/types",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend_DiplomProject.Controllers.Swagger.SupportController_Swagger",
+    "Method": "GetSupports",
+    "RelativePath": "api/SupportController_Swagger",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[Backend_DiplomProject.Models.Support, Backend-DiplomProject, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Backend_DiplomProject.Controllers.Swagger.SupportController_Swagger",
+    "Method": "PostSupport",
+    "RelativePath": "api/SupportController_Swagger",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "support",
+        "Type": "Backend_DiplomProject.Models.Support",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Backend_DiplomProject.Models.Support",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Backend_DiplomProject.Controllers.Swagger.SupportController_Swagger",
+    "Method": "GetSupport",
+    "RelativePath": "api/SupportController_Swagger/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Backend_DiplomProject.Models.Support",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Backend_DiplomProject.Controllers.Swagger.SupportController_Swagger",
+    "Method": "PutSupport",
+    "RelativePath": "api/SupportController_Swagger/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "support",
+        "Type": "Backend_DiplomProject.Models.Support",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend_DiplomProject.Controllers.Swagger.SupportController_Swagger",
+    "Method": "DeleteSupport",
+    "RelativePath": "api/SupportController_Swagger/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend_DiplomProject.Controllers.Swagger.TypeStatusSupportController",
+    "Method": "GetTypeStatusSupports",
+    "RelativePath": "api/TypeStatusSupport",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[Backend_DiplomProject.Models.TypeStatusSupport, Backend-DiplomProject, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Backend_DiplomProject.Controllers.Swagger.TypeStatusSupportController",
+    "Method": "PostTypeStatusSupport",
+    "RelativePath": "api/TypeStatusSupport",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "typeStatusSupport",
+        "Type": "Backend_DiplomProject.Models.TypeStatusSupport",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Backend_DiplomProject.Models.TypeStatusSupport",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Backend_DiplomProject.Controllers.Swagger.TypeStatusSupportController",
+    "Method": "GetTypeStatusSupport",
+    "RelativePath": "api/TypeStatusSupport/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Backend_DiplomProject.Models.TypeStatusSupport",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Backend_DiplomProject.Controllers.Swagger.TypeStatusSupportController",
+    "Method": "PutTypeStatusSupport",
+    "RelativePath": "api/TypeStatusSupport/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "typeStatusSupport",
+        "Type": "Backend_DiplomProject.Models.TypeStatusSupport",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend_DiplomProject.Controllers.Swagger.TypeStatusSupportController",
+    "Method": "DeleteTypeStatusSupport",
+    "RelativePath": "api/TypeStatusSupport/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend_DiplomProject.Controllers.Swagger.TypeSupportController",
+    "Method": "GetTypeSupports",
+    "RelativePath": "api/TypeSupport",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[Backend_DiplomProject.Models.TypeSupport, Backend-DiplomProject, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Backend_DiplomProject.Controllers.Swagger.TypeSupportController",
+    "Method": "PostTypeSupport",
+    "RelativePath": "api/TypeSupport",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "typeSupport",
+        "Type": "Backend_DiplomProject.Models.TypeSupport",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Backend_DiplomProject.Models.TypeSupport",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Backend_DiplomProject.Controllers.Swagger.TypeSupportController",
+    "Method": "GetTypeSupport",
+    "RelativePath": "api/TypeSupport/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "Backend_DiplomProject.Models.TypeSupport",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Backend_DiplomProject.Controllers.Swagger.TypeSupportController",
+    "Method": "PutTypeSupport",
+    "RelativePath": "api/TypeSupport/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "typeSupport",
+        "Type": "Backend_DiplomProject.Models.TypeSupport",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend_DiplomProject.Controllers.Swagger.TypeSupportController",
+    "Method": "DeleteTypeSupport",
+    "RelativePath": "api/TypeSupport/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Backend_DiplomProject.Controllers.Swagger.UsernameController",
     "Method": "GetUsers",
     "RelativePath": "api/Username",

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Backend_DiplomProject.Models;
-using Backend_DiplomProject;
 
 namespace Backend_DiplomProject.Controllers.Swagger;
 

@@ -17,6 +17,9 @@ namespace Backend_DiplomProject
         public DbSet<Pages> Pages { get; set; }
         public DbSet<FavoritesAndHistory> FavoritesAndHistories { get; set; }
         public DbSet<Pay> Pays { get; set; }
+        public DbSet<TypeSupport> TypeSupports { get; set; }
+        public DbSet<TypeStatusSupport> TypeStatusSupports { get; set; }
+        public DbSet<Support> Supports { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -84,6 +87,34 @@ namespace Backend_DiplomProject
                 .HasOne(p => p.User)
                 .WithMany()
                 .HasForeignKey(p => p.Idusername)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<TypeStatusSupport>()
+               .Property(tss => tss.Type)
+               .HasMaxLength(9);
+
+            modelBuilder.Entity<Support>()
+                .HasOne(s => s.TypeSupport)
+                .WithMany()
+                .HasForeignKey(s => s.Idtypesupport)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Support>()
+                .HasOne(s => s.Course)
+                .WithMany()
+                .HasForeignKey(s => s.Idcourse)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Support>()
+                .HasOne(s => s.User)
+                .WithMany()
+                .HasForeignKey(s => s.Idusername)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Support>()
+                .HasOne(s => s.TypeStatusSupport)
+                .WithMany()
+                .HasForeignKey(s => s.Idtypestatussupport)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

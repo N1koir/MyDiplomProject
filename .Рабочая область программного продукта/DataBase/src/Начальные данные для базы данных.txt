@@ -82,3 +82,36 @@
     
 "idrole": 2,
     "type": "Пользователь"
+
+
+
+
+
+"idtypesupport": 1,
+    "type": "Несоответствие описанию"
+
+"idtypesupport": 2,
+    "type": "Плагиат"
+
+"idtypesupport": 3,
+    "type": "Незаконный или вредоносный контент"
+
+"idtypesupport": 4,
+    "type": "Нарушение условия платформы"
+
+"idtypesupport": 5,
+    "type": "Взрослый или запрещенный контент"
+
+"idtypesupport": 6,
+    "type": "Нарушение законодательства"
+
+
+
+
+
+
+"idtypestatussupport": 1,
+    "type": "Открыто"
+
+"idtypestatussupport": 2,
+    "type": "Закрыто"
